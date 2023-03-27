@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="topFragment">
+    <!-- Header -->
+    <div class="search-wrapper">
+        <input type="text" class="form-search" id="searchTitle" onKeypress="javascript:if(event.keyCode==13) {search();}">
+        <span class="fa fa-search search-span" onclick="search()"></span>
+    </div>
+    <header id="header">
+        <div class="logo container">
+            <div>
+                <h1><a href="/" id="logo">DaeranBot</a></h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- Nav -->
+    <nav id="nav">
+        <ul>
+            <li class="current"><a href="/">Home</a></li>
+            <li><a href="/daeran/real-time/page">현재 대란</a></li>
+            <li><a href="/daeran/popular/page">인기 대란</a></li>
+            <li><a href="/notice/list/page">공지</a></li>
+            <li><a href="/community/list/page">포럼</a></li>
+            <th:block th:if="${userInfo != null}">
+                <li>
+                    <a>
+                        <img th:if="${userInfo.imgName == null}" src="/images/default.jpg"
+                             class="rounded-circle w-px-30 h-px-30"/>
+                        <img th:if="${userInfo.imgName != null}" th:src="@{${'/images/' + userInfo.imgName}}"
+                             class="rounded-circle w-px-40 h-px-40"/>
+                        <ul>
+                            <li><a href="javascript:void(0);" th:text="${userInfo.username}"></a></li>
+                            <li><a href="/user/profile/page">My Profile</a></li>
+                            <li><a href="javascript:logout();">Log Out</a></li>
+                        </ul>
+                    </a>
+                </li>
+            </th:block>
+            <th:block th:if="${userInfo == null}">
+                <li><a href="/auth/login/page">로그인/회원가입</a></li>
+            </th:block>
+        </ul>
+    </nav>
+
+    <!-- Banner -->
+    <!--				<section id="banner">-->
+    <!--					<div class="content">-->
+    <!--						<h2>Welcome to by HTML5 UP</h2>-->
+    <!--						<p>A free responsive site template built on HTML5, CSS3, and some other stuff</p>-->
+    <!--						<a href="#main" class="button scrolly">Alright let's go</a>-->
+    <!--					</div>-->
+    <!--				</section>-->
+</th:block>
+
+</html>

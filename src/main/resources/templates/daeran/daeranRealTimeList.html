@@ -1,0 +1,619 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<!-- Begin Page Content -->
+<div layout:fragment="content">
+    <section id="main">
+        <div class="container">
+            <div class="row gtr-200">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-12 col-12-medium">
+                            <div class="sidebar">
+                                <ul>
+                                    <li class="li-noline">
+                                        <button class="button-custom button-small margin-btm1" id="viewMode"
+                                                style="float: right; background-color: white; ">
+                                            <div style="display: flex; align-items: center;">
+                                                <img src="/assets/img/elements/four-squares.png"
+                                                     style="width: 16px; height: 16px;"
+                                                     id="viewModeImg"
+                                                />
+                                            </div>
+                                        </button>
+
+                                        <button class="button-custom button-small margin-btm1" id="filter"
+                                                style="float: right; background-color: white; ">
+                                            <div style="display: flex; align-items: center;">
+                                                <img src="/assets/img/elements/sort.png"
+                                                     style="width: 16px; height: 16px;"
+                                                />
+                                            </div>
+                                        </button>
+                                    </li>
+                                    <li class="li-noline">
+                                        <br>
+                                    </li>
+                                </ul>
+                                <ul>
+                                    <ul>
+                                        <li class="li-noline">
+                                            <article class="box post-summary" style="margin-bottom:3%">
+                                                <section class="ftco-section">
+                                                    <div class="container">
+                                                        <div>
+                                                            <div class="col-md-5">
+                                                                <ul class="ks-cboxtags">
+                                                                    <div id="itemCategory">
+                                                                        <h5>제품 카테고리</h5>
+                                                                        <li>
+                                                                            <input type="checkbox" name="1"
+                                                                                   id="1"
+                                                                            >
+                                                                            <label for="1">전자/가전</label>
+                                                                        </li>
+                                                                        <li>
+                                                                            <input type="checkbox" name="2"
+                                                                                   id="2"
+                                                                            >
+                                                                            <label for="2">의류/잡화</label>
+                                                                        </li>
+                                                                        <li>
+                                                                            <input type="checkbox" name="3"
+                                                                                   id="3"
+                                                                            >
+                                                                            <label for="3">식품/건강</label>
+                                                                        </li>
+                                                                        <li>
+                                                                            <input type="checkbox" name="4"
+                                                                                   id="4"
+                                                                            >
+                                                                            <label for="4">쿠폰/상품권</label>
+                                                                        </li>
+                                                                        <li>
+                                                                            <input type="checkbox" name="0"
+                                                                                   id="0"
+                                                                            >
+                                                                            <label for="0">기타</label>
+                                                                        </li>
+                                                                    </div>
+                                                                    <div id="siteCategory">
+                                                                        <h5>사이트 카테고리</h5>
+
+                                                                        <li>
+                                                                            <input type="checkbox" name="PPOMPPU"
+                                                                                   id="PPOMPPU"
+                                                                            >
+                                                                            <label for="PPOMPPU">뽐뿌</label>
+                                                                        </li>
+                                                                        <li>
+                                                                            <input type="checkbox" name="RULIWEB"
+                                                                                   id="RULIWEB"
+                                                                            >
+                                                                            <label for="RULIWEB">루리웹</label>
+                                                                        </li>
+                                                                        <li>
+                                                                            <input type="checkbox" name="COOLENJOY"
+                                                                                   id="COOLENJOY"
+                                                                            >
+                                                                            <label for="COOLENJOY">쿨앤조이</label>
+                                                                        </li>
+                                                                        <li>
+                                                                            <input type="checkbox" name="디젤매니아"
+                                                                                   id="디젤매니아"
+                                                                            >
+                                                                            <label for="디젤매니아">디젤매니아</label>
+                                                                        </li>
+                                                                        <li>
+                                                                            <input type="checkbox" name="핫딜은 못참지"
+                                                                                   id="핫딜은 못참지"
+                                                                            >
+                                                                            <label for="핫딜은 못참지">핫딜은 못참지</label>
+                                                                        </li>
+                                                                        <li>
+                                                                            <input type="checkbox" name="맘스홀릭"
+                                                                                   id="맘스홀릭"
+                                                                            >
+                                                                            <label for="맘스홀릭">맘스홀릭</label>
+                                                                        </li>
+                                                                        <li>
+                                                                            <input type="checkbox" name="김해 줌마렐라"
+                                                                                   id="김해 줌마렐라"
+                                                                            >
+                                                                            <label for="김해 줌마렐라">김해 줌마렐라</label>
+                                                                        </li>
+                                                                        <li>
+                                                                            <input type="checkbox" name="창원 줌마렐라"
+                                                                                   id="창원 줌마렐라"
+                                                                            >
+                                                                            <label for="창원 줌마렐라">창원 줌마렐라</label>
+                                                                        </li>
+                                                                    </div>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </section>
+                                            </article>
+                                        </li>
+                                    </ul>
+                                </ul>
+                                <ul id="items">
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <section class="box features" id="itemsByFrame">
+                    </section>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="shareModal" class="modal" style="height:15%; display: none; padding: 15px 15px;">
+        <p class="modal-body" id="modal-body" style="margin: 1em 0;"></p>
+        <p class="modal-footer" style="margin: 1em 0;">
+            <button
+                    class="button-small shared-save"
+                    style="float:right;"
+            >
+                복사
+            </button>
+        </p>
+        <a href="#close-modal" rel="modal:close" class="close-modal ">Close</a>
+    </div>
+
+
+    <script>
+        window.onload = function () {
+            init();
+        }
+
+
+        const baseUrl = '/daeran';
+        const nowCount = 0;
+        let maxCount = 10;
+        let timer;
+        let page = 0;
+
+        const init = async () => {
+            $("#siteCategory").hide();
+            $("#itemCategory").hide();
+
+            await getDaeranBoardList()
+                .then(addSiteCardList);
+            await initEvent();
+
+        }
+
+        const initEvent = () => {
+            document.addEventListener('scroll', async (e) => {
+                let documentHeight = document.body.scrollHeight;
+                let currentScroll = Number(window.scrollY + window.innerHeight);
+                let modifier = 700;
+                let limitScroll = currentScroll + modifier;
+
+                if (limitScroll > documentHeight && !timer) {
+                    timer = setTimeout(async () => {
+                        timer = null;
+                        page++;
+                        if ($('#itemsByFrame').hasClass('active')) {
+                            await getDaeranListFrameMode();
+                        } else {
+                            await getDaeranBoardList()
+                                .then(addSiteCardList);
+                        }
+                    }, 500);
+                }
+            });
+
+            document.querySelector(".shared-save").addEventListener("click", function () {
+                let tempElem = document.createElement('textarea');
+                let url = $('#modal-body').text();
+                tempElem.value = url;
+                document.body.appendChild(tempElem);
+
+                tempElem.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempElem);
+            });
+
+            document.querySelector("#filter").addEventListener("click", function (e) {
+                let siteCategory = $("#siteCategory");
+                let itemCategory = $("#itemCategory");
+                let filter = $('#filter');
+
+                if (siteCategory.hasClass('active')) {
+
+                    siteCategory.hide();
+                    itemCategory.hide();
+                    siteCategory.removeClass('active');
+                    filter.removeClass('button-custom-active');
+                } else {
+                    siteCategory.show();
+                    itemCategory.show();
+                    siteCategory.addClass('active');
+                    filter.addClass('button-custom-active');
+                }
+            });
+
+            document.querySelector("#viewMode").addEventListener("click", async () => {
+                let itemsByFrame = $('#itemsByFrame');
+                let modeImg = document.querySelector("#viewModeImg");
+
+                if (itemsByFrame.hasClass('active')) {
+                    modeImg.src = '/assets/img/elements/four-squares.png';
+
+                    page = 0;
+                    maxCount = 10;
+                    itemsByFrame.removeClass('active');
+                    itemsByFrame.html('');
+                    await getDaeranBoardList()
+                        .then(addSiteCardList);
+                } else {
+                    modeImg.src = '/assets/img/elements/list.png';
+
+                    page = 0;
+                    maxCount = 20;
+                    itemsByFrame.addClass('active');
+                    $('#items').html('');
+                    await getDaeranListFrameMode();
+                }
+
+            });
+
+
+            let checkBoxes = document.querySelectorAll("input[type=checkbox]");
+            checkBoxes.forEach(checkBox => {
+                checkBox.addEventListener("click", async (e) => {
+                    let itemsByFrame = $('#itemsByFrame');
+                    if (itemsByFrame.hasClass('active')) {
+                        page = 0;
+                        maxCount = 20;
+                        $('#items').html('');
+                        itemsByFrame.html('');
+                        await getDaeranListFrameMode();
+                    } else {
+                        page = 0;
+                        maxCount = 10;
+                        $('#items').html('');
+                        itemsByFrame.html('');
+                        await getDaeranBoardList()
+                            .then(addSiteCardList);
+                    }
+                });
+            });
+
+        }
+
+        const getDaeranListFrameMode = async () => {
+            await getDaeranBoardList()
+                .then(addDaeranListByFrame);
+        }
+
+        const getDaeranBoardList = async () => {
+            return new Promise((resolve, reject) => {
+                let siteChecked = $('#siteCategory > li > input:checked');
+                let filterParam = "&siteName=";
+                for (let i = 0; i < siteChecked.length; i++) {
+                    filterParam += i == 0 ? siteChecked.get(i).name : ',' + siteChecked.get(i).name;
+                }
+
+                let itemChecked = $('#itemCategory > li > input:checked');
+                let categoryParam = "&category=";
+                for (let i = 0; i < itemChecked.length; i++) {
+                    categoryParam += i == 0 ? itemChecked.get(i).name : ',' + itemChecked.get(i).name;
+                }
+
+                let queryString = "page=" + page + "&size=" + maxCount + filterParam + categoryParam;
+                let promise = $.ajax({
+                    url: baseUrl + "?" + queryString,
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const addDaeranListByFrame = (list) => {
+            let rowOpenHtml = ' <div>	<div class="row">';
+            let rowCloseHtml = ' </div> </div>';
+            let html = '';
+
+            list.forEach((row, index) => {
+                if (index > maxCount) return false;
+                html += getCardHtml(row);
+                if ((index + 1) % 4 == 0 || index == (list.length - 1)) {
+                    let rowHtml = rowOpenHtml + html + rowCloseHtml;
+                    document.getElementById('itemsByFrame').innerHTML += rowHtml;
+                    html = '';
+                }
+            });
+        }
+
+        const getLikeList = async () => {
+            return new Promise((resolve, reject) => {
+                let promise = $.ajax({
+                    url: '/like/username',
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const getReplyList = (boardId, replyList) => {
+            let html = '';
+            replyList.forEach(row => {
+                html += '  <div class="btm-line margin-btm1">                                                                        ';
+                html += '                       <img src="/images/' + getOrDefaultImgName(row.imgName) + '" alt class="w-px-40 h-px-40 rounded-circle"/>';
+                html += '                       <span> ' + row.username + '</span>                                                 ';
+                html += '                       <p> ' + row.content + '</p>                                                       ';
+                html += '  </div> ';
+            })
+            document.getElementById('replyCount' + boardId).innerText = replyList.length;
+            document.getElementById('replywrapper' + boardId).innerHTML = html;
+        }
+
+        const getReplyListById = (boardId) => {
+            $.ajax({
+                url: '/reply?boardId=' + boardId,
+                type: 'GET'
+            }).done(result => {
+                let html = '';
+                result.forEach(row => {
+                    html += '  <div class="btm-line margin-btm1">                                                                        ';
+                    html += '                       <img src="/images/' + getOrDefaultImgName(row.imgName) + '" alt class="w-px-40 h-px-40 rounded-circle margin-btm"/>';
+                    html += '                       <span> ' + row.username + '</span>                                                 ';
+                    html += '                       <p> ' + row.content + '</p>                                                       ';
+                    html += '  </div> ';
+                })
+                document.getElementById('replyCount' + boardId).innerText = result.length;
+                document.getElementById('replywrapper' + boardId).innerHTML = html;
+            }).fail(commonError);
+        }
+
+        const addSiteCardList = async (list) => {
+            let likeList = await getLikeList();
+            let idList = [];
+
+            likeList.forEach((row, index) => {
+                idList.push(row.daeran.id);
+            });
+
+            list.forEach((row, index) => {
+                row.liked = false;
+                if (idList.includes(row.id)) row.liked = true;
+                let html = getRowHtml(row);
+
+                document.getElementById('items').innerHTML += html;
+                getReplyList(row.id, row.replyList);
+            });
+        }
+
+        const addLike = (el, id) => {
+            if (!validateToken()) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+
+            let data = {
+                'daeranId': id
+            };
+
+            $.ajax({
+                url: "/like",
+                type: 'POST',
+                data: data
+            }).done(result => {
+                if (result) {
+                    $(el).addClass("liked");
+                    let text = $(el).text();
+                    let likeCount = parseInt(text.replace('좋아요', ''));
+                    likeCount++;
+                    $(el).html('<i class="fa fa-heart" aria-hidden="true"></i>' + '좋아요' + likeCount);
+                }
+            }).fail(commonError)
+
+        }
+
+        const addReply = (id) => {
+            if (!validateToken()) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+
+            let contentId = 'reply' + id;
+
+            let data = {
+                'daeranId': id,
+                'content': $('#' + contentId).val()
+            };
+
+            $.ajax({
+                url: "/reply",
+                type: 'POST',
+                data: data
+            }).done(result => {
+                if (result) {
+                    alert('댓글을 작성하였습니다.');
+                    getReplyListById(id);
+                }
+            }).fail(commonError)
+        }
+
+        const loadShare = (id) => {
+            let protocol = location.protocol + '//';
+            let host = location.hostname;
+            let port = location.port;
+
+            let url = protocol + host + ((port == null || port == '') ? '' : ':' + port);
+            $('#modal-body').text(url + '/daeran/' + id + '/page');
+        }
+
+        const getRowHtml = (data) => {
+            let html = "";
+            html += ' <ul>                                                                                           ';
+            html += '     <li class="li-noline">                                                              ';
+            html += '         <article class="box post-summary" style="margin-bottom:3%" >                           ';
+            html += '             <div class="item-div">                                                             ';
+            html += '                 <img src="' + data.logoPath + '"                                           ';
+            html += '                      height="200"                                                              ';
+            html += '                      width="200" class="thumb">                                                ';
+            html += '                 <div class="item-div-title">                                                   ';
+            html += '                     <h2 class="bx badge bg-info">                                              ';
+            html += '                                                                                                ';
+            html += '                         <ul class="meta">                                                      ';
+            html += '                             <li class="icon fa-compass">' + data.siteName + '</li>             ';
+            html += '                             <li class="icon fa-folder">' + data.categoryNm + '</li>            ';
+            html += '                         </ul>                                                                  ';
+            html += '                         <h3 class="dt"><a href="/daeran/origin/page?daeranId=' + data.id + '" target="_blank" class="title">' + cutInfo(data.title) + '</a></h3>';
+
+            if (notEmpty(data.price)) {
+                html += '                         <p class="list_icon">                                                  ';
+                html += '                             <strong class="sale_price">' + numberWithCommas(data.price) + '</strong>원                                 ';
+                html += '                         </p>                                                                   ';
+            }
+
+            html += '                         <ul class="meta">                                                      ';
+
+            if(isFreeShip(data.title)){
+                html += '                         <i class="fa fa-truck" aria-hidden="true">무료배송</i>              ';
+            }
+
+            html += '                             <li class="icon fa-clock">' + compareDate(data.regDate) + '</li>   ';
+            html += '                             <li class="icon fa-comments" id="replyCount' + data.id + '"></li>               ';
+            html += '                         </ul>                                                                  ';
+            html += '                     </h2>                                                                      ';
+            html += '                 </div>                                                                         ';
+            html += '             </div>                                                                             ';
+            html += '         </article>                                                                             ';
+            html += '     </li>                                                                                      ';
+            html += '            <hr class="my-0"/>                                                                              ';
+            html += '            <div class="card-body">                                                                         ';
+            html += '                <form  method="POST" onsubmit="return false">                                               ';
+            html += '                    <div class="mt-2">                                                                      ';
+            html += '                        <div class="margin-btm1 font-size-small">                                                           ';
+            html += '                            <span onclick="addLike(this, ' + data.id + ')">                                 ';
+
+            if (data.liked) {
+                html += '                            <i class="fa fa-heart" aria-hidden="true"></i>좋아요' + data.likeCount;
+            } else {
+                html += '                            <i class="fa fa-heart-o" aria-hidden="true" ></i> 좋아요' + data.likeCount;
+            }
+
+            html += '                            </span>                                                                         ';
+            html += '                            <span onclick="loadShare(' + data.id + ')"><i class="share-btn" >      ';
+            html += '                            <a href="#shareModal" rel="modal:open" class="font-custom"></i>🔗공유하기</span></a>                                                                           ';
+            html += '                         </div>                                                                             ';
+            html += '                            <div id="replywrapper' + data.id + '">                                          ';
+            html += '                            </div>                                                                          ';
+            html += '                        <input                                                                              ';
+            html += '                                class="form-control-reply margin-btm1"                                            ';
+            html += '                                type="text"                                                                 ';
+            html += '                                id="reply' + data.id + '"                                                   ';
+            html += '                                placeholder="댓글 달기"/>                                                     ';
+            html += '                        <button type="button" class="button-small" onclick="addReply(' + data.id + ')">작성</button>';
+            html += '                    </div>                                                                                  ';
+            html += '                </form>                                                                                     ';
+            html += '            </div>                                                                                          ';
+            html += ' </ul>                                                                                          ';
+
+            return html;
+        }
+
+        const getCardHtml = (row) => {
+            let html = '                            <div class="col-3 col-6-medium margin-btm2">                                          ';
+            html += '                                                                                                                               ';
+            html += '                                <!-- Feature -->                                                                               ';
+            html += '                                <section class="box feature">                                                                  ';
+            html += '                                    <a href="/daeran/origin/page?daeranId=' + row.id + '" target="_blank" class="image featured"><img src="' + row.logoPath + '" alt=""/></a>                ';
+            html += '                                    <h5><a href="/daeran/origin/page?daeranId=' + row.id + '" target="_blank">' + row.title
+            html += '                                        <img src="/assets/img/icons/unicons/link_icon.png" class="rounded width12" />         ';
+            html += '                                    </a></h5>                                                                                  ';
+            html += '                                </section>                                                                                     ';
+            html += '                            </div>                                                                                             ';
+            return html;
+        };
+
+        const today = () => {
+            let date = new Date();
+            let year = date.getFullYear().toString();
+
+            let month = date.getMonth() + 1;
+            month = month < 10 ? '0' + month.toString() : month.toString();
+
+            let day = date.getDate();
+            day = day < 10 ? '0' + day.toString() : day.toString();
+
+            let hour = date.getHours();
+            hour = hour < 10 ? '0' + hour.toString() : hour.toString();
+
+            let minute = date.getMinutes();
+            minute = minute < 10 ? '0' + minute.toString() : minute.toString();
+
+            let seconds = date.getSeconds();
+            seconds = seconds < 10 ? '0' + seconds.toString() : seconds.toString();
+
+            return year + month + day + hour + minute + seconds;
+        }
+
+        const compareDate = (regDate) => {
+            const today = new Date();
+            const timeValue = new Date(regDate);
+
+            const betweenTime = Math.floor((today.getTime() - timeValue.getTime()) / 1000 / 60);
+            if (betweenTime < 1) return '방금전';
+            if (betweenTime < 60) {
+                return `${betweenTime}분전`;
+            }
+
+            const betweenTimeHour = Math.floor(betweenTime / 60);
+            if (betweenTimeHour < 24) {
+                return `${betweenTimeHour}시간전`;
+            }
+
+            const betweenTimeDay = Math.floor(betweenTime / 60 / 24);
+            if (betweenTimeDay < 365) {
+                return `${betweenTimeDay}일전`;
+            }
+
+            return `${Math.floor(betweenTimeDay / 365)}년전`;
+        }
+
+
+        const cutInfo = (title) => {
+            let sIdx = title.lastIndexOf('(');
+            let eIdx = title.lastIndexOf(')') + 1;
+            if(sIdx < 1 || eIdx < 1) return title;
+
+            let info = title.substring(sIdx, eIdx);
+            if (info.indexOf('원') != -1 || info.indexOf('무료') != -1 || info.indexOf('무배') != -1) {
+                title = title.substring(0, sIdx);
+            }
+            return title;
+        }
+
+        const isFreeShip = (title) => {
+            if(title.indexOf('무료') != -1 || title.indexOf('무배') != -1){
+                return true;
+            }
+            return false;
+        }
+
+        const numberWithCommas = (x) => {
+            x = x.replaceAll(',', '');
+          return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+    </script>
+</div>
+
+</html>

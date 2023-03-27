@@ -1,0 +1,111 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<!-- Begin Page Content -->
+<div layout:fragment="content">
+    <section id="main">
+        <div class="container">
+            <div class="row gtr-200">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-12 col-12-medium">
+                            <h5>제목</h5>
+                            <div>
+                                <div>
+                                    <input
+                                            type="text"
+                                            class="form-control"
+                                            id="title"
+                                            aria-describedby="defaultFormControlHelp"
+                                    />
+                                </div>
+                            </div>
+                            <br>
+                            <div id="editor"></div>
+                            <button type="button" class="btn btn-primary me-2 margin-top1" style="float: right;"
+                                    onclick="addNotice()">작성
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </button>
+    </section>
+    <script>
+        let editor;
+        const baseUrl = '/notice';
+
+        window.onload = function () {
+            initEditor();
+        }
+
+        const initEditor = () => {
+            editor = new toastui.Editor({
+                el: document.querySelector('#editor'),
+                height: '500px',
+                initialEditType: 'wysiwyg',
+                previewStyle: 'vertical',
+                hooks: {
+                    addImageBlobHook: (blob, callback) => {
+                        const formData = new FormData();
+                        formData.append('image', blob);
+                        let url = '/images/';
+
+                        $.ajax({
+                            type: 'POST',
+                            enctype: 'multipart/form-data',
+                            url: '/image-upload',
+                            data: formData,
+                            dataType: 'json',
+                            processData: false,
+                            contentType: false,
+                            cache: false,
+                            timeout: 600000,
+                            success: function (data) {
+                                url += data.filename;
+
+                                // callback : 에디터(마크다운 편집기)에 표시할 텍스트, 뷰어에는 imageUrl 주소에 저장된 사진으로 나옴
+                                // 형식 : ![대체 텍스트](주소)
+                                callback(url, '사진 대체 텍스트 입력');
+                            },
+                            error: function (e) {
+                                //console.log('ajax 이미지 업로드 실패');
+                                //console.log(e.abort([statusText]));
+
+                                callback('image_load_fail', '사진 대체 텍스트 입력');
+                            }
+                        });
+                    }
+                }
+            });
+
+        }
+
+        const addNotice = () => {
+            let data = {
+                title: $('#title').val(),
+                content: editor.getHTML()
+            };
+
+            $.ajax({
+                url: baseUrl,
+                data: data,
+                type: 'POST'
+            }).done(result => {
+                if (result) {
+                    alert('게시글이 등록되었습니다.');
+                    location.href = '/notice/list/page';
+                }
+            }).fail(commonError);
+        }
+
+    </script>
+
+
+</div>
+
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- 공통으로 쓰이는 script 파일을넣는다.-->
+<th:block th:fragment="scriptFragment">
+
+    <!-- Scripts -->
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/jquery.dropotron.min.js"></script>
+    <script src="/assets/js/jquery.scrolly.min.js"></script>
+    <script src="/assets/js/browser.min.js"></script>
+    <script src="/assets/js/breakpoints.min.js"></script>
+    <script src="/assets/js/util.js"></script>
+    <script src="/assets/js/main.js"></script>
+
+    <!-- Common JS -->
+    <script src="/assets/js/common.js"></script>
+
+    <!-- Toast Editor -->
+    <script src="/assets/js/toastui-editor-all.min.js"></script>
+
+    <!-- Cookie JS-->
+    <script src="/assets/js/cookie.min.js"></script>
+
+    <!-- Jquery Blck UI -->
+    <script async defer src="/assets/js/jquery.blockUI.js"></script>
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <!-- 에드센스 -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7225759616223190"
+         crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+    <!-- 카카오 에드핏 -->
+    <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+
+    <!-- 임시 https://obfuscator.io/ -->
+    <script>
+       $(document).ready(async () => {
+            await getMyInfo();
+
+
+            $.blockUI.defaults.message = '<div class="block-div"><h1><img src="/assets/img/icons/unicons/loading-bar6.gif"/></h1></div>';
+            $.blockUI.defaults.overlayCSS.opacity = .2;
+            $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
+
+        });
+
+        const logout = () => {
+            Cookies.remove(AUTH_TOKEN);
+            location.href='/';
+        }
+
+        const goSignUp = () => {
+            location.href = '/auth/signup/page';
+        }
+
+        const goLogin = () => {
+            location.href = '/auth/login/page';
+        }
+
+        const isEmpty = (value) => {
+            return (typeof value === 'undefined' || value == null
+                || value.length === 0);
+        }
+
+        const notEmpty = (value) => {
+            return !isEmpty(value);
+        }
+
+        const getOrDefaultImgName = (imgName) => {
+            return isEmpty(imgName) ? 'default.jpg' : imgName;
+        }
+
+        const search = () => {
+            let page = '/daeran/search/page?title=' + $('#searchTitle').val();
+            location.href = page;
+        }
+    </script>
+</th:block>
+</html>

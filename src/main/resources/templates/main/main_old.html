@@ -1,0 +1,585 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<!-- Begin Page Content -->
+<div layout:fragment="content">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row">
+            <!-- Order Statistics -->
+            <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center justify-content-between pb-0">
+                        <div class="card-title mb-0">
+                            <h5 class="m-0 me-2">📊 오늘의 대란 데이터</h5>
+                            <small class="text-muted"></small>
+                        </div>
+                        <div class="dropdown">
+                            <button
+                                    class="btn p-0"
+                                    type="button"
+                                    id="orederStatistics"
+                                    data-bs-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                            >
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex flex-column align-items-center gap-1">
+                                <h2 class="mb-2" id="fullCount"></h2>
+                                <span>Total Post</span>
+                            </div>
+                            <div id="boardStatisticsChart"></div>
+                        </div>
+                        <ul class="p-0 m-0">
+                            <li class="d-flex mb-4 pb-1">
+                                <div class="avatar flex-shrink-0 me-3">
+                                    <img src="./assets/img/icons/unicons/naver_cafe_logo.png" alt="User"
+                                         class="rounded"/>
+                                </div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <h6 class="mb-0">Cafe</h6>
+                                        <small class="text-muted">Naver, Daum, Tistory</small>
+                                    </div>
+                                    <div class="user-progress">
+                                        <small class="fw-semibold" id="cafeCount"></small>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="d-flex mb-4 pb-1">
+                                <div class="avatar flex-shrink-0 me-3">
+                                    <img src="./assets/img/icons/unicons/ppomppu_logo.png" alt="User" class="rounded"/>
+                                </div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <h6 class="mb-0">Site</h6>
+                                        <small class="text-muted">Ppomppu, fmkorea, nuriweb</small>
+                                    </div>
+                                    <div class="user-progress">
+                                        <small class="fw-semibold" id="siteCount"></small>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Popular Writing -->
+            <div class="col-md-6 col-lg-4 order-2 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h5 class="card-title m-0 me-2">
+                            <i class="bx margin-btm2">
+                                <img src="/assets/img/icons/unicons/fire_emoji.png"
+                                     height="20"
+                                     width="20"/> </i> 인기글</h5>
+                        <div class="dropdown">
+                            <button
+                                    class="btn p-0"
+                                    type="button"
+                                    id="popularMore"
+                                    data-bs-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                            >
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cafeMore">
+                                <a class="dropdown-item" href="/daeran/popular/page">더보기</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <ul class="p-0 m-0" id="popularCard">
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--/ Popular Writing -->
+
+            <!-- Realtime Writing -->
+            <div class="col-md-6 col-lg-4 order-2 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h5 class="card-title m-0 me-2">
+                            <i class="bx margin-btm2">
+                                <img src="/assets/img/icons/unicons/on_air.png"
+                                     height="20"
+                                     class="d-block rounded"
+                                     width="20"/> </i> 실시간</h5>
+                        <div class="dropdown">
+                            <button
+                                    class="btn p-0"
+                                    type="button"
+                                    id="realtimeMore"
+                                    data-bs-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                            >
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="transactionID">
+                                <a class="dropdown-item" href="/daeran/real-time/page">더보기</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <ul class="p-0 m-0" id="realtimeCard">
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--/ Realtime Writing -->
+        </div>
+        <div class="row">
+            <!-- Cafe Daeran -->
+            <div class="col-md-6 col-lg-4 order-0 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h5 class="card-title m-0 me-2">
+                            <i class="bx margin-btm2">
+                                <img src="/assets/img/icons/unicons/dollar.png"
+                                     height="20"
+                                     class="d-block rounded"
+                                     width="20"></i> 카페</h5>
+                        <div class="dropdown">
+                            <button
+                                    class="btn p-0"
+                                    type="button"
+                                    id="cafeMore"
+                                    data-bs-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                            >
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cafeMore">
+                                <a class="dropdown-item" href="/daeran/cafe/page">더보기</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <ul class="p-0 m-0" id="cafeCard">
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--/ Cafe Daeran -->
+
+            <!-- Site Daeran -->
+            <div class="col-md-6 col-lg-4 order-1 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h5 class="card-title m-0 me-2">
+                            <i class="bx margin-btm2">
+                                <img src="/assets/img/icons/unicons/credit_card.png"
+                                     height="20"
+                                     class="d-block rounded"
+                                     width="20"
+                                />
+                            </i> 사이트</h5>
+                        <div class="dropdown">
+                            <button
+                                    class="btn p-0"
+                                    type="button"
+                                    id="siteMore"
+                                    data-bs-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                            >
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="transactionID">
+                                <a class="dropdown-item" href="/daeran/site/page">더보기</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <ul class="p-0 m-0" id="siteCard">
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!--            <div class="col-md-6 col-lg-4 order-2 mb-4">-->
+            <!--                <div class="card h-100">-->
+
+            <!--/ Site Daeran -->
+            <div class="col-md-6 col-lg-4 order-2 mb-4">
+                <div class="row">
+                    <div class="col-md-12 col-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body" id="replyCard">
+                                <div class="card-title d-flex align-items-start justify-content-between">
+                                    <h8 class="card-title m-0 me-2">
+                                        <i class="bx margin-btm2">
+                                            <img src="/assets/img/icons/unicons/keyboard.png"
+                                                 height="20"
+                                                 class="d-block rounded"
+                                                 width="20"
+                                            />
+                                        </i> 실시간 댓글
+                                    </h8>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 col-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body" id="communityCard">
+                                <div class="card-title d-flex align-items-start justify-content-between">
+                                    <h8 class="card-title m-0 me-2">
+                                        <i class="bx margin-btm2">
+                                            <img src="/assets/img/icons/unicons/clipboard.png"
+                                                 height="20"
+                                                 class="d-block rounded"
+                                                 width="20"
+                                            />
+                                        </i> 자유게시판
+                                    </h8>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        window.onload = function () {
+            init();
+        }
+
+        const baseUrl = '/daeran';
+        const maxCount = 5;
+        let page = 0;
+
+        const init = async () => {
+            await getSiteBoardList()
+                .then(addSiteCardList)
+                .then(getCafeBoardList)
+                .then(addCafeCardList)
+                .then(initBoardSatistics)
+                .then(getPopularBoardList)
+                .then(addPopularCardList)
+                .then(getBoardListByRegDate)
+                .then(addRealtimeCardList)
+                .then(getReplyByLastFive)
+                .then(addReplyCardList)
+                .then(getCommunityBoardList)
+                .then(addCommunityCardList);
+        }
+
+
+        const getSiteBoardList = async () => {
+            return new Promise((resolve, reject) => {
+                let queryString = "page=" + page + "&size=" + maxCount;
+                let promise = $.ajax({
+                    url: baseUrl + "/section/SITE?" + queryString,
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const getCafeBoardList = () => {
+            return new Promise((resolve, reject) => {
+                let queryString = "page=" + page + "&size=" + maxCount;
+                let promise = $.ajax({
+                    url: baseUrl + "/section/CAFE?" + queryString,
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const getPopularBoardList = async () => {
+            return new Promise((resolve, reject) => {
+                let promise = $.ajax({
+                    url: baseUrl + "/likeCount",
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const getBoardListByRegDate = () => {
+            let queryString = "page=" + page + "&size=" + maxCount;
+            return new Promise((resolve, reject) => {
+                let promise = $.ajax({
+                    url: baseUrl + "/regDate?" + queryString,
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const getReplyByLastFive = () => {
+            return new Promise((resolve, reject) => {
+                let promise = $.ajax({
+                    url: "/reply/last-five",
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const getNoticeBoardList = () => {
+            return new Promise((resolve, reject) => {
+                let promise = $.ajax({
+                    url: "/notice",
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const getCommunityBoardList = () => {
+            return new Promise((resolve, reject) => {
+                let promise = $.ajax({
+                    url: "/community",
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const getStatisticsCount = () => {
+            return new Promise((resolve, reject) => {
+                let promise = $.ajax({
+                    url: baseUrl + "/statistics",
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const getCardHtml = (data) => {
+            let html = '';
+            html += '<li class="d-flex mb-4 pb-1" >';
+            html += '    <div class="avatar flex-shrink-0 me-3">';
+            html += '        <img src="' + data.logoPath + '" alt="User" class="rounded"/>';
+            html += '    </div>';
+            html += '    <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">';
+            html += '        <div class="me-2">';
+            html += '            <small class="text-muted d-block mb-1">' + data.siteName + '</small>';
+            html += '            <h6 class="mb-0"><a href="' + data.link + '" >' + data.title.substring(0, 20) + '</a></h6>';
+            html += '        </div>';
+            html += '    </div>';
+            html += '</li>';
+
+            return html;
+        }
+
+        const getReplyCardHtml = (data, index) => {
+            index++;
+            let html = '';
+            html += '<span class="badge badge-center bg-primary margin-btm1">' + index + '</span>';
+            html += '<a class="text-bg-secondary fw-semibold" href = "/daeran/' + data.daeranId + '/page"> ';
+            html += data.content + '</a><br>';
+
+            return html;
+        }
+
+        const getNoticeCardHtml = (data, index) => {
+            index++;
+            let html = '';
+            html += '<span class="badge badge-center bg-warning margin-btm1">' + index + '</span>';
+            html += '<a class="text-bg-secondary fw-semibold " href = "/notice/' + data.id + '"> ';
+            html += data.title.substring(0, 9) + '</a><br>';
+
+            return html;
+        }
+
+        const getCommunityCardHtml = (data, index) => {
+            index++;
+            let html = '';
+            html += '<span class="badge badge-center bg-secondary margin-btm1">' + index + '</span>';
+            html += '<a class="text-bg-secondary fw-semibold" href = "/community/' + data.id + '"> ';
+            html += data.title + '</a><br>';
+
+            return html;
+        }
+
+        const addSiteCardList = (list) => {
+            list.forEach((row, index) => {
+                if (index >= maxCount) return false;
+                let html = getCardHtml(row);
+
+                document.getElementById('siteCard').innerHTML += html;
+            });
+        }
+
+        const addCafeCardList = (list) => {
+            list.forEach((row, index) => {
+                if (index >= maxCount) return false;
+                let html = getCardHtml(row);
+
+                document.getElementById('cafeCard').innerHTML += html;
+            });
+        }
+
+        const addPopularCardList = (list) => {
+            list.forEach((row, index) => {
+                if (index >= maxCount) return false;
+                let html = getCardHtml(row);
+
+                document.getElementById('popularCard').innerHTML += html;
+            })
+        }
+
+        const addRealtimeCardList = (list) => {
+            list.forEach((row, index) => {
+                if (index >= maxCount) return false;
+                let html = getCardHtml(row);
+
+                document.getElementById('realtimeCard').innerHTML += html;
+            });
+        }
+
+        const addReplyCardList = (list) => {
+            list.forEach((row, index) => {
+                if (index >= 5) return false;
+                let html = getReplyCardHtml(row, index);
+
+                document.getElementById('replyCard').innerHTML += html;
+            });
+        }
+
+        const addNoticeCardList = (list) => {
+            list.forEach((row, index) => {
+                if (index >= 5) return false;
+                let html = getNoticeCardHtml(row, index);
+
+                document.getElementById('noticeCard').innerHTML += html;
+            });
+        }
+
+        const addCommunityCardList = (list) => {
+            list.forEach((row, index) => {
+                if (index >= 5) return false;
+                let html = getCommunityCardHtml(row, index);
+
+                document.getElementById('communityCard').innerHTML += html;
+            });
+        }
+
+        const addViewCount = (id) => {
+            $.ajax({
+                url: baseUrl + "/viewCount",
+                type: 'PUT',
+                data: {'id': id}
+            }).done(result => {
+                resolve(result);
+            }).fail(commonError);
+        }
+
+
+        // Order Statistics Chart
+        // --------------------------------------------------------------------
+        const initBoardSatistics = async () => {
+            const cardColor = config.colors.white;
+            const headingColor = config.colors.headingColor;
+            const axisColor = config.colors.axisColor;
+            const borderColor = config.colors.borderColor;
+            let countData = await getStatisticsCount();
+            let dataCount = parseInt(countData.CAFE + countData.SITE);
+            $('#cafeCount').text(countData.CAFE);
+            $('#siteCount').text(countData.SITE);
+            $('#fullCount').text(dataCount);
+
+            const chartOrderStatistics = document.querySelector('#boardStatisticsChart'),
+                orderChartConfig = {
+                    chart: {
+                        height: 165,
+                        width: 130,
+                        type: 'donut'
+                    },
+                    labels: ['Cafe', 'Site'],
+                    series: [countData.CAFE, countData.SITE],
+                    colors: [config.colors.info, config.colors.success],
+                    stroke: {
+                        width: 5,
+                        colors: cardColor
+                    },
+                    dataLabels: {
+                        enabled: false,
+                        formatter: function (val, opt) {
+                            return parseInt(val) + '%';
+                        }
+                    },
+                    legend: {
+                        show: false
+                    },
+                    grid: {
+                        padding: {
+                            top: 0,
+                            bottom: 0,
+                            right: 15
+                        }
+                    },
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                size: '75%',
+                                labels: {
+                                    show: true,
+                                    value: {
+                                        fontSize: '1.5rem',
+                                        fontFamily: 'Public Sans',
+                                        color: headingColor,
+                                        offsetY: -15,
+                                        formatter: function (val) {
+
+                                            return parseInt(val * 100 / dataCount) + '%';
+                                        }
+                                    },
+                                    name: {
+                                        offsetY: 20,
+                                        fontFamily: 'Public Sans'
+                                    },
+                                    total: {
+                                        show: true,
+                                        fontSize: '0.8125rem',
+                                        color: axisColor,
+                                        label: 'Today',
+                                        formatter: function (w) {
+                                            return '100%';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+            if (typeof chartOrderStatistics !== undefined && chartOrderStatistics !== null) {
+                const statisticsChart = new ApexCharts(chartOrderStatistics, orderChartConfig);
+                statisticsChart.render();
+            }
+        }
+
+    </script>
+</div>
+</html>

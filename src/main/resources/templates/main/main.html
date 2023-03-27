@@ -1,0 +1,310 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<!-- Begin Page Content -->
+<div layout:fragment="content">
+    <section id="main">
+        <div class="container">
+            <div class="row gtr-200">
+                <!--							<div class="col-12">-->
+
+                <!--								&lt;!&ndash; Highlight &ndash;&gt;-->
+                <!--									<section class="box highlight">-->
+                <!--										<ul class="special">-->
+                <!--											<li><a href="#" class="icon solid fa-search"><span class="label">Magnifier</span></a></li>-->
+                <!--											<li><a href="#" class="icon solid fa-tablet-alt"><span class="label">Tablet</span></a></li>-->
+                <!--											<li><a href="#" class="icon solid fa-flask"><span class="label">Flask</span></a></li>-->
+                <!--											<li><a href="#" class="icon solid fa-cog"><span class="label">Cog?</span></a></li>-->
+                <!--										</ul>-->
+                <!--										<header>-->
+                <!--											<h2>A random assortment of icons in circles</h2>-->
+                <!--											<p>And some text that attempts to explain their significance</p>-->
+                <!--										</header>-->
+                <!--										<p>-->
+                <!--											Phasellus quam turpis, feugiat sit amet ornare in, hendrerit in lectus. Praesent semper mod quis eget mi. Etiam eu<br />-->
+                <!--											ante risus. Aliquam erat volutpat. Aliquam luctus et mattis lectus amet pulvinar. Nam nec turpis consequat.-->
+                <!--										</p>-->
+                <!--									</section>-->
+
+                <!--							</div>-->
+                <div class="col-12">
+
+                    <!-- Features -->
+                    <section class="box features" id="daeranList">
+                        <h2 class="major"><span>오늘의 대란</span></h2>
+
+                    </section>
+                    <div class="more-center">
+                        <a href="/daeran/real-time/page" class="button alt">더보기</a>
+                    </div>
+                </div>
+                <div class="col-12">
+
+                    <!-- Blog -->
+                    <section class="box blog">
+                        <h2 class="major"><span>게시글</span></h2>
+                        <div>
+                            <div class="row">
+                                <div class="col-4 col-12-medium">
+                                    <div class="sidebar">
+
+                                        <!-- Archives -->
+                                        <ul class="divided" id="noticeCard">
+                                            <li>
+                                                <article class="box post-summary">
+                                                    <h3><a href="#" class="impact-1"><img
+                                                            src="/assets/img/icons/unicons/notice.png"
+                                                            height="20"
+                                                            class="d-block rounded"
+                                                            width="20"
+                                                    /> 공지사항</a></h3>
+                                                </article>
+                                            </li>
+
+                                        </ul>
+                                        <a href="/notice/list/page" class="button alt">더보기</a>
+
+                                    </div>
+                                </div>
+                                <div class="col-4 col-12-medium">
+                                    <div class="sidebar">
+
+                                        <!-- Archives -->
+                                        <ul class="divided" id="communityCard">
+                                            <li>
+                                                <article class="box post-summary">
+                                                    <h3><a href="#" class="impact-1"><img
+                                                            src="/assets/img/icons/unicons/clipboard.png"
+                                                            height="20"
+                                                            class="d-block rounded"
+                                                            width="20"
+                                                    />자유게시판</a></h3>
+                                                </article>
+                                            </li>
+                                        </ul>
+                                        <a href="/community/list/page" class="button alt">더보기</a>
+
+                                    </div>
+                                </div>
+                                <div class="col-4 col-12-medium">
+                                    <div class="sidebar">
+
+                                        <!-- Archives -->
+                                        <ul class="divided" id="replyCard">
+                                            <li>
+                                                <article class="box post-summary">
+                                                    <h3><a href="#" class="impact-1"><img
+                                                            src="/assets/img/icons/unicons/keyboard.png"
+                                                            height="20"
+                                                            class="d-block rounded"
+                                                            width="20"
+                                                    />실시간 댓글</a></h3>
+                                                </article>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        const baseUrl = '/daeran';
+        const maxCount = 8;
+        let page = 0;
+
+        window.onload = function () {
+            init();
+        }
+
+        const init = async () => {
+            await getBoardListByRegDate()
+                .then(addDaeranList)
+                .then(getCommunityBoardList)
+                .then(addCommunityCardList)
+                .then(getNoticeBoardList)
+                .then(addNoticeCardList)
+                .then(getReplyByLastFive)
+                .then(addReplyCardList);
+        }
+
+        const getBoardListByRegDate = async () => {
+            let queryString = "page=" + page + "&size=" + maxCount;
+            return new Promise((resolve, reject) => {
+                let promise = $.ajax({
+                    url: baseUrl + "?" + queryString,
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const addDaeranList = (list) => {
+            let rowOpenHtml = ' <div>	<div class="row">';
+            let rowCloseHtml = ' </div> </div>';
+            let html = '';
+
+            list.forEach((row, index) => {
+                if (index > maxCount) return false;
+                html += getCardHtml(row);
+                if ((index + 1) % 4 == 0 || index == (list.length - 1)) {
+                    let rowHtml = rowOpenHtml + html + rowCloseHtml;
+                    document.getElementById('daeranList').innerHTML += rowHtml;
+                    html = '';
+                }
+            });
+        }
+
+        const getCardHtml = (row) => {
+            let html = '                            <div class="col-3 col-6-medium margin-btm2">                                          ';
+            html += '                                                                                                                               ';
+            html += '                                <!-- Feature -->                                                                               ';
+            html += '                                <section class="box feature">                                                                  ';
+            html += '                                    <a href="/daeran/origin/page?daeranId=' + row.id + '" target="_blank" class="image featured"><img src="' + row.logoPath + '" alt=""/></a>                ';
+            html += '                                    <h5><a href="/daeran/origin/page?daeranId=' + row.id + '" target="_blank">' + row.title
+            html += '                                        <img src="/assets/img/icons/unicons/link_icon.png" class="rounded width12" />         ';
+            html += '                                    </a></h5>                                                                                  ';
+            html += '                                </section>                                                                                     ';
+            html += '                            </div>                                                                                             ';
+            return html;
+        };
+
+        const getNoticeBoardList = () => {
+            return new Promise((resolve, reject) => {
+                let promise = $.ajax({
+                    url: "/notice",
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const getCommunityBoardList = () => {
+            return new Promise((resolve, reject) => {
+                let promise = $.ajax({
+                    url: "/community",
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const getReplyByLastFive = () => {
+            return new Promise((resolve, reject) => {
+                let promise = $.ajax({
+                    url: "/reply/last-five",
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+
+        const addNoticeCardList = (list) => {
+            list.forEach((row, index) => {
+                if (index >= 5) return false;
+                let html = getNoticeCardHtml(row, index);
+
+                document.getElementById('noticeCard').innerHTML += html;
+            });
+        }
+
+        const addCommunityCardList = (list) => {
+            list.forEach((row, index) => {
+                if (index >= 5) return false;
+                let html = getCommunityCardHtml(row, index);
+
+                document.getElementById('communityCard').innerHTML += html;
+            });
+        }
+
+        const addReplyCardList = (list) => {
+            list.forEach((row, index) => {
+                if (index >= 5) return false;
+                let html = getReplyCardHtml(row, index);
+
+                document.getElementById('replyCard').innerHTML += html;
+            });
+        }
+
+        const getCommunityCardHtml = (data, index) => {
+            index++;
+            let html = '<li>                                                             ';
+            html += '    <article class="box post-summary">                              ';
+            html += '        <h3><a href="/community/' + data.id + '">' + data.title + '</a></h3>                    ';
+            html += '        <ul class="meta">                                           ';
+            html += '            <li class="icon fa-clock">' + compareDate(data.regDate) + '</li>              ';
+            html += '            <li class="icon fa-comments"><a href="#">0</a></li>    ';
+            html += '        </ul>                                                       ';
+            html += '    </article>                                                      ';
+            html += '</li>                                                               ';
+            return html;
+        }
+
+        const getNoticeCardHtml = (data, index) => {
+            index++;
+            let html = '<li>                                                             ';
+            html += '    <article class="box post-summary">                              ';
+            html += '        <h3><a href="/notice/' + data.id + '">' + data.title + '</a></h3>                    ';
+            html += '        <ul class="meta">                                           ';
+            html += '            <li class="icon fa-clock">' + compareDate(data.regDate) + '</li>              ';
+            html += '            <li class="icon fa-comments"><a href="#">0</a></li>    ';
+            html += '        </ul>                                                       ';
+            html += '    </article>                                                      ';
+            html += '</li>                                                               ';
+            return html;
+        }
+
+        const getReplyCardHtml = (data, index) => {
+            index++;
+            let html = '<li>                                                             ';
+            html += '    <article class="box post-summary">                              ';
+            html += '        <h3><a href = "/daeran/' + data.daeranId + '/page">' + data.content + '</a></h3>                    ';
+            html += '        <ul class="meta">                                           ';
+            html += '            <li class="icon fa-clock">' + compareDate(data.regDate) + '</li>              ';
+            html += '            <li class="icon fa-comments"><a href="#">0</a></li>    ';
+            html += '        </ul>                                                       ';
+            html += '    </article>                                                      ';
+            html += '</li>                                                               ';
+            return html;
+        }
+
+
+        const compareDate = (regDate) => {
+            const today = new Date();
+            const timeValue = new Date(regDate);
+
+            const betweenTime = Math.floor((today.getTime() - timeValue.getTime()) / 1000 / 60);
+            if (betweenTime < 1) return '방금전';
+            if (betweenTime < 60) {
+                return `${betweenTime}분전`;
+            }
+
+            const betweenTimeHour = Math.floor(betweenTime / 60);
+            if (betweenTimeHour < 24) {
+                return `${betweenTimeHour}시간전`;
+            }
+
+            const betweenTimeDay = Math.floor(betweenTime / 60 / 24);
+            if (betweenTimeDay < 365) {
+                return `${betweenTimeDay}일전`;
+            }
+
+            return `${Math.floor(betweenTimeDay / 365)}년전`;
+        }
+
+
+    </script>
+</div>
+</html>

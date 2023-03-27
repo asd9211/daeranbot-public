@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    window.onload = function () {
+            location.href = ConvertSystemSourcetoHtml(/*<![CDATA[*/ "[[${link}]]" /*]]>*/);
+    }
+
+    function ConvertSystemSourcetoHtml(str){
+     str = str.replace(/&lt;/g, "<");
+     str = str.replace(/&gt;/g, ">");
+     str = str.replace(/&quot;/g, "\"");
+     str = str.replace(/&#39;/g, "\'");
+     str = str.replace(/&amp;/g, "&");
+     return str;
+    }
+</script>
+</body>
+</html>

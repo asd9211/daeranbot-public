@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>대란봇</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <meta name="description" content="실시간으로 대란으로 올라오는 최저가 제품들을 소개해주는 사이트입니다.">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="대란봇">
+    <meta property="og:description" content="실시간으로 대란으로 올라오는 최저가 제품들을 소개해주는 사이트입니다.">
+    <meta property="og:url" content="https://daeranbot.com/">
+
+    <link rel="shortcut icon" type="image/x-icon" href="https://daeranbot.com/assets/img/icons/brands/daeranbot_logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/assets/login/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/assets/login/css/util.css">
+    <link rel="stylesheet" type="text/css" href="/assets/login/css/main.css">
+    <!--===============================================================================================-->
+</head>
+<body>
+
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100">
+            <form class="login100-form validate-form" onsubmit="return false">
+					<span class="login100-form-title p-b-26">
+						Welcome
+					</span>
+                <span class="login100-form-title p-b-26">
+                    						DaeranBot
+                    					</span>
+
+                <div class="wrap-input100 validate-input" data-validate="Enter username">
+                    <input class="input100" type="text" name="username" id="username">
+                    <span class="focus-input100" data-placeholder="username"></span>
+                </div>
+
+                <div class="wrap-input100 validate-input" data-validate="Enter password">
+						<span class="btn-show-pass">
+							<i class="zmdi zmdi-eye"></i>
+						</span>
+                    <input class="input100" type="password" name="password" id="password">
+                    <span class="focus-input100" data-placeholder="Password"></span>
+                </div>
+
+                <div class="container-login100-form-btn">
+                    <div class="wrap-login100-form-btn">
+                        <div class="login100-form-bgbtn"></div>
+                        <button class="login100-form-btn" onclick="login()">
+                            Login
+                        </button>
+                    </div>
+                </div>
+
+                <div class="text-center p-t-115">
+						<span class="txt1">
+							계정이 없으신가요?
+						</span>
+
+                    <a class="txt2" href="/auth/signup/page">
+                        Sign Up
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="dropDownSelect1"></div>
+
+<!--===============================================================================================-->
+<script src="/assets/login/vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+<script src="/assets/login/vendor/bootstrap/js/popper.js"></script>
+<!--===============================================================================================-->
+<script src="/assets/login/js/main.js"></script>
+<!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+<script src="/assets/js/config.js"></script>
+<!-- Common JS -->
+<script src="/assets/js/common.js"></script>
+<!-- Cookie JS-->
+<script src="/assets/js/cookie.min.js"></script>
+<!-- Jquery Blck UI -->
+<script async defer src="/assets/js/jquery.blockUI.js"></script>
+
+<script>
+    $(document).ready(async () => {
+        $.blockUI.defaults.message = '<div class="block-div"><h1><img src="/assets/img/icons/unicons/loading-bar6.gif" class="block-img"/></h1></div>';
+        $.blockUI.defaults.overlayCSS.opacity = .2;
+        $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
+    });
+
+    const baseUrl = '/auth/login';
+
+    const login = () => {
+        let username = $('#username').val();
+        let password = $('#password').val();
+        let data = {
+            'username': username,
+            'password': password
+        };
+
+        $.ajax({
+            url: baseUrl,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data)
+        }).done(result => {
+            if (result) {
+                alert('로그인에 성공하였습니다.');
+                var in30Minutes = 1 / 48;
+                Cookies.set(AUTH_TOKEN, result, {
+                    expires: in30Minutes
+                });
+                location.href = '/';
+            } else {
+                alert('계정 혹은 비밀번호가 틀렸습니다.');
+            }
+        }).fail(commonError);
+
+    }
+</script>
+</body>
+</html>

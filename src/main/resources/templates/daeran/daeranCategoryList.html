@@ -1,0 +1,394 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<!-- Begin Page Content -->
+<div layout:fragment="content">
+    <section id="main">
+        <div class="container">
+            <div class="row gtr-200">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-12 col-12-medium">
+                            <div class="sidebar">
+                                <ul id="items">
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="shareModal" class="modal" style="height:15%; display: none;">
+        <p class="modal-body" id="modal-body" style="margin: 1em 0;"></p>
+        <p class="modal-footer" style="margin: 1em 0;">
+            <button
+                    class="button-small shared-save"
+                    style="float:right;"
+            >
+                주소복사
+            </button>
+        </p>
+        <a href="#close-modal" rel="modal:close" class="close-modal ">Close</a>
+    </div>
+
+
+    <script>
+        window.onload = function () {
+            init();
+            initEvent();
+        }
+
+
+        const baseUrl = '/daeran';
+        const maxCount = 10;
+        const nowCount = 0;
+        let timer;
+        let page = 0;
+
+        const init = async () => {
+            await getSiteBoardList()
+                .then(addSiteCardList);
+        }
+
+        const initEvent = () => {
+            document.addEventListener('scroll', async (e) => {
+                let documentHeight = document.body.scrollHeight;
+                let currentScroll = Number(window.scrollY + window.innerHeight);
+                let modifier = documentHeight/5;
+                let limitScroll = currentScroll + modifier;
+
+                if (limitScroll > documentHeight && !timer) {
+                    timer = setTimeout(async () => {
+                        timer = null;
+                        page++;
+                        await getSiteBoardList()
+                            .then(addSiteCardList);
+                    }, 500);
+                }
+            });
+
+            document.querySelector(".shared-save").addEventListener("click", function () {
+                let tempElem = document.createElement('textarea');
+                let url = $('#modal-body').text();
+                tempElem.value = url;
+                document.body.appendChild(tempElem);
+
+                tempElem.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempElem);
+            });
+        }
+
+        const getSiteBoardList = async () => {
+            return new Promise((resolve, reject) => {
+                let code =  /*<![CDATA[*/ "[[${code}]]" /*]]>*/;
+                console.log(code);
+                let queryString = "?page=" + page + "&size=" + maxCount + "&category=" + code;
+                let promise = $.ajax({
+                    url: baseUrl + queryString,
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const getLikeList = async () => {
+            return new Promise((resolve, reject) => {
+                let promise = $.ajax({
+                    url: '/like/username',
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const getReplyList = (boardId) => {
+            $.ajax({
+                url: '/reply?boardId=' + boardId,
+                type: 'GET'
+            }).done(result => {
+                let html = '';
+                result.forEach(row => {
+                    html += '  <div class="btm-line margin-btm1">                                                                        ';
+                    html += '                       <img src="/images/' + getOrDefaultImgName(row.imgName) + '" alt class="w-px-40 h-px-40 rounded-circle"/>';
+                    html += '                       <span> ' + row.username + '</span>                                                 ';
+                    html += '                       <p> ' + row.content + '</p>                                                       ';
+                    html += '  </div> ';
+                })
+                document.getElementById('replyCount' + boardId).innerText = result.length;
+                document.getElementById('replywrapper' + boardId).innerHTML = html;
+
+            }).fail(commonError);
+        }
+
+        const addSiteCardList = async (list) => {
+            let likeList = await getLikeList();
+            let idList = [];
+
+            likeList.forEach((row, index) => {
+                idList.push(row.daeran.id);
+            });
+
+            list.forEach((row, index) => {
+                row.liked = false;
+                if (idList.includes(row.id)) row.liked = true;
+                let html = getRowHtml(row);
+
+                document.getElementById('items').innerHTML += html;
+                getReplyList(row.id);
+            });
+        }
+
+        const addLike = (el, id) => {
+            if (!validateToken()) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+
+            let data = {
+                'daeranId': id
+            };
+
+            $.ajax({
+                url: "/like",
+                type: 'POST',
+                data: data
+            }).done(result => {
+                if (result) {
+                    $(el).addClass("liked");
+                    let text = $(el).text();
+                    let likeCount = parseInt(text.replace('좋아요', ''));
+                    likeCount++;
+                    $(el).html('<i class="fa fa-heart" aria-hidden="true"></i>' + '좋아요' + likeCount);
+                }
+            }).fail(commonError)
+
+        }
+
+        const addReply = (id) => {
+            if (!validateToken()) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+
+            let contentId = 'reply' + id;
+
+            let data = {
+                'daeranId': id,
+                'content': $('#' + contentId).val()
+            };
+
+            $.ajax({
+                url: "/reply",
+                type: 'POST',
+                data: data
+            }).done(result => {
+                if (result) {
+                    alert('댓글을 작성하였습니다.');
+                    getReplyList(id);
+                }
+            }).fail(commonError)
+        }
+
+        const loadShare = (id) => {
+            let protocol = location.protocol + '//';
+            let host = location.hostname;
+            let port = location.port;
+
+            let url = protocol + host + ((port == null || port == '') ? '' : ':' + port);
+            $('#modal-body').text(url + '/daeran/' + id + '/page');
+        }
+
+        const getRowHtml = (data) => {
+            let html = "";
+            html += ' <ul>                                                                                           ';
+            html += '     <li class="li-noline">                                                              ';
+            html += '         <article class="box post-summary" style="margin-bottom:3%" >                           ';
+            html += '             <div class="item-div">                                                             ';
+            html += '                 <img src="' + data.logoPath + '"                                           ';
+            html += '                      height="200"                                                              ';
+            html += '                      width="200" class="thumb">                                                ';
+            html += '                 <div class="item-div-title">                                                   ';
+            html += '                     <h2 class="bx badge bg-info">                                              ';
+            html += '                                                                                                ';
+            html += '                         <ul class="meta">                                                      ';
+            html += '                             <li class="icon fa-compass">' + data.siteName + '</li>             ';
+            html += '                             <li class="icon fa-folder">' + data.categoryNm + '</li>            ';
+            html += '                         </ul>                                                                  ';
+            html += '                         <h3 class="dt"><a href="' + data.link + '" class="title">' + data.title + '</a></h3>';
+            html += '                         <ul class="meta">                                                      ';
+            html += '                             <li class="icon fa-clock">' + compareDate(data.regDate) + '</li>   ';
+            html += '                             <li class="icon fa-comments" id="replyCount' + data.id + '"></li>               ';
+            html += '                         </ul>                                                                  ';
+            html += '                     </h2>                                                                      ';
+            html += '                 </div>                                                                         ';
+            html += '             </div>                                                                             ';
+            html += '         </article>                                                                             ';
+            html += '     </li>                                                                                      ';
+            html += '            <hr class="my-0"/>                                                                              ';
+            html += '            <div class="card-body">                                                                         ';
+            html += '                <form  method="POST" onsubmit="return false">                                               ';
+            html += '                    <div class="mt-2">                                                                      ';
+            html += '                        <div class="margin-btm1">                                                           ';
+            html += '                            <span onclick="addLike(this, ' + data.id + ')">                                 ';
+
+            if (data.liked) {
+                html += '                            <i class="fa fa-heart" aria-hidden="true"></i>좋아요' + data.likeCount;
+            } else {
+                html += '                            <i class="fa fa-heart-o" aria-hidden="true" ></i> 좋아요' + data.likeCount;
+            }
+
+            html += '                            </span>                                                                         ';
+            html += '                            <span onclick="loadShare(' + data.id + ')"><i class="share-btn" >      ';
+            html += '                            <a href="#shareModal" rel="modal:open" class="font-custom"></i>🔗공유하기</span></a>                                                                           ';
+            html += '                         </div>                                                                             ';
+            html += '                            <div id="replywrapper' + data.id + '">                                          ';
+            html += '                            </div>                                                                          ';
+            html += '                        <input                                                                              ';
+            html += '                                class="form-control margin-btm1"                                            ';
+            html += '                                type="text"                                                                 ';
+            html += '                                id="reply' + data.id + '"                                                   ';
+            html += '                                placeholder="댓글 달기"/>                                                     ';
+            html += '                        <button type="button" class="button-small" onclick="addReply(' + data.id + ')">작성</button>';
+            html += '                    </div>                                                                                  ';
+            html += '                </form>                                                                                     ';
+            html += '            </div>                                                                                          ';
+            html += ' </ul>                                                                                          ';
+
+            return html;
+        }
+
+        const getRowHtml_bak = (data) => {
+            let html = "";
+            html += '<ul>                                                                                    ';
+            html += '            <h5 class="card-header"></h5>                                                     ';
+            html += '            <!-- Account -->                                                                                ';
+            html += '            <li class="card-body">                                                                         ';
+            html += '                <div style="display: flex !important; align-items: flex-start !important; gap: 1.5rem !important;">                                                ';
+            html += '                    <img    src="' + data.logoPath + '"                                                     ';
+            html += '                            class="d-block rounded"                                                         ';
+            html += '                            height="200"                                                                    ';
+            html += '                            width="200"                                                                     ';
+            html += '                            />                                                                              ';
+            html += '                    <div style="flex: 0 0 auto;width: 70%">                                                             ';
+            html += '                            <h2 class="bx badge bg-info"> ' + data.siteName + '</h2>              ';
+            html += '                            <span class="bx badge bg-warning"> ' + data.categoryNm + '</span>                    ';
+            html += '                        <a      class="form-control fw-semibold"                                ';
+            html += '                                href="' + data.link + '"                                                    ';
+            html += '                                >                                                                           ';
+            html += '                                <h3 ><span>' + data.title + '</span></h3>                                                        ';
+            html += '                            <span style="float: right"class="icon fa-clock"> ' + compareDate(data.regDate) + '</span>              ';
+            html += '                        </a>    ';
+
+            if (notEmpty(data.price)) {
+                html += '                       <button type="button">                    ';
+                html += '                           ' + data.price + '원                                                                  ';
+                html += '                       </button>                                                                            ';
+            }
+
+            if (data.title.includes('무배') || data.title.includes('무료')) {
+                html += '                       <button type="button" class="btn btn-outline-info margin-top1">무료배송                ';
+                html += '                            <img    src="/assets/img/icons/unicons/ship.png"                                 ';
+                html += '                            alt="user-avatar"                                                               ';
+                html += '                            height="25"                                                                     ';
+                html += '                            width="25"                                                                      ';
+                html += '                            />                                                                              ';
+                html += '                       </button>                                                                            ';
+            }
+            html += '                   </div>                                                                                      ';
+            html += '                </div>                                                                                      ';
+            html += '            </li>                                                                                          ';
+            html += '            <hr class="my-0"/>                                                                              ';
+            html += '            <div class="card-body">                                                                         ';
+            html += '                <form  method="POST" onsubmit="return false">                                               ';
+            html += '                    <div class="mt-2">                                                                      ';
+            html += '                        <div class="margin-btm1">                                                           ';
+            html += '                            <span onclick="addLike(this, ' + data.id + ')">                                 ';
+
+            if (data.liked) {
+                html += '                            <i class="fa fa-heart" aria-hidden="true"></i>좋아요' + data.likeCount;
+            } else {
+                html += '                            <i class="fa fa-heart-o" aria-hidden="true" ></i> 좋아요' + data.likeCount;
+            }
+
+            html += '                            </span>                                                                         ';
+            html += '                            <i class="share-btn" data-bs-toggle="modal" data-bs-target="#modalToggle" onclick="loadShare(' + data.id + ')">      ';
+            html += '                                🔗공유하기                                                                    ';
+            html += '                            </i>                                                                            ';
+            html += '                         </div>                                                                             ';
+            html += '                            <div id="replywrapper' + data.id + '">                                          ';
+            html += '                            </div>                                                                          ';
+            html += '                        <input                                                                              ';
+            html += '                                class="form-control margin-btm1"                                            ';
+            html += '                                type="text"                                                                 ';
+            html += '                                id="reply' + data.id + '"                                                   ';
+            html += '                                placeholder="댓글 달기"/>                                                     ';
+            html += '                        <button type="button" class="btn btn-primary me-2" onclick="addReply(' + data.id + ')">작성</button>';
+            html += '                        <button type="reset" class="btn btn-outline-secondary">Cancel</button>              ';
+            html += '                    </div>                                                                                  ';
+            html += '                </form>                                                                                     ';
+            html += '            </div>                                                                                          ';
+            html += '        </ul>                                                                                              ';
+
+            return html;
+        }
+
+        const today = () => {
+            let date = new Date();
+            let year = date.getFullYear().toString();
+
+            let month = date.getMonth() + 1;
+            month = month < 10 ? '0' + month.toString() : month.toString();
+
+            let day = date.getDate();
+            day = day < 10 ? '0' + day.toString() : day.toString();
+
+            let hour = date.getHours();
+            hour = hour < 10 ? '0' + hour.toString() : hour.toString();
+
+            let minute = date.getMinutes();
+            minute = minute < 10 ? '0' + minute.toString() : minute.toString();
+
+            let seconds = date.getSeconds();
+            seconds = seconds < 10 ? '0' + seconds.toString() : seconds.toString();
+
+            return year + month + day + hour + minute + seconds;
+        }
+
+        const compareDate = (regDate) => {
+            const today = new Date();
+            const timeValue = new Date(regDate);
+
+            const betweenTime = Math.floor((today.getTime() - timeValue.getTime()) / 1000 / 60);
+            if (betweenTime < 1) return '방금전';
+            if (betweenTime < 60) {
+                return `${betweenTime}분전`;
+            }
+
+            const betweenTimeHour = Math.floor(betweenTime / 60);
+            if (betweenTimeHour < 24) {
+                return `${betweenTimeHour}시간전`;
+            }
+
+            const betweenTimeDay = Math.floor(betweenTime / 60 / 24);
+            if (betweenTimeDay < 365) {
+                return `${betweenTimeDay}일전`;
+            }
+
+            return `${Math.floor(betweenTimeDay / 365)}년전`;
+        }
+
+
+
+    </script>
+</div>
+
+</html>

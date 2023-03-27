@@ -1,0 +1,323 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<!-- Begin Page Content -->
+<div layout:fragment="content">
+    <section id="main">
+        <div class="container">
+            <div class="row gtr-200">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-12 col-12-medium">
+                            <div class="sidebar">
+                                <ul id="items">
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="shareModal" class="modal" style="height:15%; display: none;">
+        <p class="modal-body" id="modal-body" style="margin: 1em 0;"></p>
+        <p class="modal-footer" style="margin: 1em 0;">
+            <button
+                    class="button-small shared-save"
+                    style="float:right;"
+            >
+                주소복사
+            </button>
+        </p>
+        <a href="#close-modal" rel="modal:close" class="close-modal ">Close</a>
+    </div>
+
+    <script>
+        window.onload = function () {
+            init();
+        }
+
+
+        const baseUrl = '/daeran';
+        let page = 0;
+        const maxCount = 10;
+        const nowCount = 0;
+
+        const init = async () => {
+            await getBoard()
+                .then(addCard);
+        }
+
+        const getBoard = async () => {
+            return new Promise((resolve, reject) => {
+                let id =  /*<![CDATA[*/ "[[${id}]]" /*]]>*/
+                let promise = $.ajax({
+                    url: baseUrl + '/' + id,
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const getLikeList = async () => {
+            return new Promise((resolve, reject) => {
+                let promise = $.ajax({
+                    url: '/like/username',
+                    type: 'GET'
+                }).done(result => {
+                    resolve(result);
+                }).fail(commonError);
+            });
+        }
+
+        const getReplyList = (boardId) => {
+            $.ajax({
+                url: '/reply?boardId=' + boardId,
+                type: 'GET'
+            }).done(result => {
+                let html = '';
+                result.forEach(row => {
+                    html += '  <div class="btm-line margin-btm1">                                                                        ';
+                    html += '                       <img src="/images/' + getOrDefaultImgName(row.imgName) + '" alt class="w-px-40 h-px-40 rounded-circle margin-btm"/>';
+                    html += '                       <span> ' + row.username + '</span>                                                 ';
+                    html += '                       <p> ' + row.content + '</p>                                                       ';
+                    html += '  </div> ';
+                })
+                document.getElementById('replywrapper' + boardId).innerHTML = html;
+
+            }).fail(commonError);
+        }
+
+        const addCard = async (row) => {
+            let likeList = await getLikeList();
+            let idList = [];
+
+            likeList.forEach((row, index) => {
+                idList.push(row.daeran.id);
+            });
+
+            row.liked = false;
+            if (idList.includes(row.id)) row.liked = true;
+            let html = getRowHtml(row);
+
+            document.getElementById('items').innerHTML += html;
+            getReplyList(row.id);
+
+        }
+
+        const addLike = (el, id) => {
+            if (!validateToken()) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+
+            if ($(el).hasClass("liked")) {
+                $(el).html('<i class="fa fa-heart-o" aria-hidden="true"></i>좋아요');
+                $(el).removeClass("liked");
+            } else {
+                let data = {
+                    'daeranId': id
+                };
+
+                $.ajax({
+                    url: "/like",
+                    type: 'POST',
+                    data: data
+                }).done(result => {
+                    if (result) {
+                        $(el).addClass("liked");
+                        let text = $(el).text();
+                        let likeCount = parseInt(text.replace('좋아요', ''));
+                        likeCount++;
+                        $(el).html('<i class="fa fa-heart" aria-hidden="true"></i>' + '좋아요' + likeCount);
+                    }
+                }).fail(commonError)
+            }
+        }
+
+        const addReply = (id) => {
+            if (!validateToken()) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+
+            let contentId = 'reply' + id;
+
+            let data = {
+                'daeranId': id,
+                'content': $('#' + contentId).val()
+            };
+
+            $.ajax({
+                url: "/reply",
+                type: 'POST',
+                data: data
+            }).done(result => {
+                if (result) {
+                    alert('댓글을 작성하였습니다.');
+                    getReplyList(id);
+                }
+            }).fail(commonError)
+
+        }
+
+        const getRowHtml = (data) => {
+            let html = "";
+            html += ' <ul>                                                                                           ';
+            html += '     <li class="li-noline">                                                              ';
+            html += '         <article class="box post-summary" style="margin-bottom:3%" >                           ';
+            html += '             <div class="item-div">                                                             ';
+            html += '                 <img src="' + data.logoPath + '"                                           ';
+            html += '                      height="200"                                                              ';
+            html += '                      width="200" class="thumb">                                                ';
+            html += '                 <div class="item-div-title">                                                   ';
+            html += '                     <h2 class="bx badge bg-info">                                              ';
+            html += '                                                                                                ';
+            html += '                         <ul class="meta">                                                      ';
+            html += '                             <li class="icon fa-compass">' + data.siteName + '</li>             ';
+            html += '                             <li class="icon fa-folder">' + data.categoryNm + '</li>            ';
+            html += '                         </ul>                                                                  ';
+            html += '                         <h3 class="dt"><a href="/daeran/origin/page?daeranId=' + data.id + '" target="_blank" class="title">' + cutInfo(data.title) + '</a></h3>';
+
+            if (notEmpty(data.price)) {
+                html += '                         <p class="list_icon">                                                  ';
+                html += '                             <strong class="sale_price">' + numberWithCommas(data.price) + '</strong>원                                 ';
+                html += '                         </p>                                                                   ';
+            }
+
+            html += '                         <ul class="meta">                                                      ';
+
+            if (isFreeShip(data.title)) {
+                html += '                         <i class="fa fa-truck" aria-hidden="true">무료배송</i>              ';
+            }
+
+            html += '                             <li class="icon fa-clock">' + compareDate(data.regDate) + '</li>   ';
+            html += '                             <li class="icon fa-comments" id="replyCount' + data.id + '"></li>               ';
+            html += '                         </ul>                                                                  ';
+            html += '                     </h2>                                                                      ';
+            html += '                 </div>                                                                         ';
+            html += '             </div>                                                                             ';
+            html += '         </article>                                                                             ';
+            html += '     </li>                                                                                      ';
+            html += '            <hr class="my-0"/>                                                                              ';
+            html += '            <div class="card-body">                                                                         ';
+            html += '                <form  method="POST" onsubmit="return false">                                               ';
+            html += '                    <div class="mt-2">                                                                      ';
+            html += '                        <div class="margin-btm1 font-size-small">                                                           ';
+            html += '                            <span onclick="addLike(this, ' + data.id + ')">                                 ';
+
+            if (data.liked) {
+                html += '                            <i class="fa fa-heart" aria-hidden="true"></i>좋아요' + data.likeCount;
+            } else {
+                html += '                            <i class="fa fa-heart-o" aria-hidden="true" ></i> 좋아요' + data.likeCount;
+            }
+
+            html += '                            </span>                                                                         ';
+            html += '                            <span onclick="loadShare(' + data.id + ')"><i class="share-btn" >      ';
+            html += '                            <a href="#shareModal" rel="modal:open" class="font-custom"></i>🔗공유하기</span></a>                                                                           ';
+            html += '                         </div>                                                                             ';
+            html += '                            <div id="replywrapper' + data.id + '">                                          ';
+            html += '                            </div>                                                                          ';
+            html += '                        <input                                                                              ';
+            html += '                                class="form-control-reply margin-btm1"                                            ';
+            html += '                                type="text"                                                                 ';
+            html += '                                id="reply' + data.id + '"                                                   ';
+            html += '                                placeholder="댓글 달기"/>                                                     ';
+            html += '                        <button type="button" class="button-small" onclick="addReply(' + data.id + ')">작성</button>';
+            html += '                    </div>                                                                                  ';
+            html += '                </form>                                                                                     ';
+            html += '            </div>                                                                                          ';
+            html += ' </ul>                                                                                          ';
+
+            return html;
+        }
+
+        const loadShare = (id) => {
+            let protocol = location.protocol + '//';
+            let host = location.hostname;
+            let port = location.port;
+
+            let url = protocol + host + ((port == null || port == '') ? '' : ':' + port);
+            $('#modal-body').text(url + '/daeran/' + id + '/page');
+        }
+
+        const today = () => {
+            let date = new Date();
+            let year = date.getFullYear().toString();
+
+            let month = date.getMonth() + 1;
+            month = month < 10 ? '0' + month.toString() : month.toString();
+
+            let day = date.getDate();
+            day = day < 10 ? '0' + day.toString() : day.toString();
+
+            let hour = date.getHours();
+            hour = hour < 10 ? '0' + hour.toString() : hour.toString();
+
+            let minute = date.getMinutes();
+            minute = minute < 10 ? '0' + minute.toString() : minute.toString();
+
+            let seconds = date.getSeconds();
+            seconds = seconds < 10 ? '0' + seconds.toString() : seconds.toString();
+
+            return year + month + day + hour + minute + seconds;
+        }
+
+        const cutInfo = (title) => {
+            let sIdx = title.lastIndexOf('(');
+            let eIdx = title.lastIndexOf(')') + 1;
+            if (sIdx < 1 || eIdx < 1) return title;
+
+            let info = title.substring(sIdx, eIdx);
+            if (info.indexOf('원') != -1 || info.indexOf('무료') != -1 || info.indexOf('무배') != -1) {
+                title = title.substring(0, sIdx);
+            }
+            return title;
+        }
+
+        const compareDate = (regDate) => {
+            const today = new Date();
+            const timeValue = new Date(regDate);
+
+            const betweenTime = Math.floor((today.getTime() - timeValue.getTime()) / 1000 / 60);
+            if (betweenTime < 1) return '방금전';
+            if (betweenTime < 60) {
+                return `${betweenTime}분전`;
+            }
+
+            const betweenTimeHour = Math.floor(betweenTime / 60);
+            if (betweenTimeHour < 24) {
+                return `${betweenTimeHour}시간전`;
+            }
+
+            const betweenTimeDay = Math.floor(betweenTime / 60 / 24);
+            if (betweenTimeDay < 365) {
+                return `${betweenTimeDay}일전`;
+            }
+
+            return `${Math.floor(betweenTimeDay / 365)}년전`;
+        }
+
+        const isFreeShip = (title) => {
+            if (title.indexOf('무료') != -1 || title.indexOf('무배') != -1) {
+                return true;
+            }
+            return false;
+        }
+
+        const numberWithCommas = (x) => {
+            x = x.replaceAll(',', '');
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+
+    </script>
+</div>
+
+</html>

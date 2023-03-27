@@ -1,0 +1,112 @@
+spring:
+  profiles:
+    active: local #???? ??
+  config:
+    use-legacy-processing: true
+
+#local ??
+---
+spring:
+  profiles: local
+  jpa:
+    hibernate:
+      dialect: org.hibernate.dialect.PostgreSQL10Dialect
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: 'true'
+        show_sql: 'true'
+  thymeleaf:
+    cache: 'false'
+    prefix: file:src/main/resources/templates/
+  datasource:
+    password: 1q2w3e4r-+
+    username: drbot
+    url: jdbc:postgresql://54.180.18.156/drbot_db
+  devtools:
+    livereload:
+      enabled: 'true'
+  redis:
+    port: 6379
+    host: 54.180.18.156
+
+management:
+  endpoints:
+    web:
+      base-path: /
+      path-mapping:
+        health: health
+      exposure:
+        include: "health"
+remote:
+  private_key: C:/Users/yh/Downloads/daeran-key_rsa
+  username: ec2-user
+  port: '22'
+  ip: 54.180.18.156
+
+img:
+  storage_path: file:C:/imgstorage/
+  chrome_driver_path: C:/chromedriver/chromedriver.exe
+  save_path: C:/imgstorage/
+  input_file_path: C:/imgstorage/
+  output_file_path: /home/ec2-user/imgstorage/
+
+org:
+  gradle:
+    daemon: 'false'
+
+server:
+  port: '8082'
+
+
+#?? ??
+---
+spring:
+  profiles: real
+  jpa:
+    hibernate:
+      dialect: org.hibernate.dialect.PostgreSQL10Dialect
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: 'true'
+        show_sql: 'true'
+  thymeleaf:
+    cache: 'false'
+    prefix: classpath:/templates/
+    suffix: .html
+  datasource:
+    password: 1q2w3e4r-+
+    username: drbot
+    url: jdbc:postgresql://54.180.18.156/drbot_db
+  devtools:
+    livereload:
+      enabled: 'true'
+  redis:
+    port: 6379
+    host: drbot-redis.5pjf3f.ng.0001.apn2.cache.amazonaws.com
+
+management:
+  endpoints:
+    web:
+      base-path: /
+      path-mapping:
+        health: health
+      exposure:
+        include: "health"
+remote:
+  private_key: C:/Users/yh/Downloads/daeran-key_rsa
+  username: ec2-user
+  port: '22'
+  ip: 54.180.18.156
+
+img:
+  storage_path: file:/home/ec2-user/imgstorage/
+  chrome_driver_path: /home/utils/chromedriver.exe
+  save_path: /home/ec2-user/imgstorage/
+  input_file_path: C:/imgstorage/
+  output_file_path: /home/ec2-user/imgstorage/
+
+org:
+  gradle:
+    daemon: 'false'

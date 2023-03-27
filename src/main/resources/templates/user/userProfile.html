@@ -1,0 +1,210 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<!-- Begin Page Content -->
+<div layout:fragment="content">
+    <section id="main">
+        <div class="container">
+            <div class="row gtr-200">
+                <div class="col-12">
+
+                <!-- Register Card -->
+                <div class="card">
+                    <div class="card-body">
+
+                        <!-- Logo -->
+                        <div class="app-brand justify-content-center">
+<!--                                                    <span class="app-brand-logo demo">-->
+<!--                                                        <a href="/" class="app-brand-link gap-2">-->
+<!--                                                           <img src="/assets/img/icons/brands/daeranbot_logo.png"-->
+<!--                                                                class="rounded" width="100px;"/>-->
+<!--                                                        </a>-->
+<!--                                                    </span>-->
+                        </div>
+                        <div>
+                            <h2 class="major">MY INFO</h2>
+                        </div>
+
+                        <!-- Image -->
+                        <div class="app-brand justify-content-center">
+                            <div class="pic-rayout" onclick="fileInput()">
+                                <p style="margin-top: 40%">사진</p>
+                            </div>
+                            <form id="uploadForm" enctype="multipart/form-data">
+                                <input type="file" id="real-input" class="image_inputType_file"
+                                       accept="img/*" required hidden
+                                       onchange="setThumbnail(event);"/>
+                            </form>
+                        </div>
+
+                        <form id="formAuthentication" class="mb-3">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">ID</label>
+                                <input
+                                        type="text"
+                                        class="form-control bg-white"
+                                        readonly
+                                        id="username"
+                                        name="username"
+                                        placeholder="Enter your username"
+                                        autofocus
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="text"
+                                       class="form-control bg-white"
+                                       id="email"
+                                       name="email"
+                                       readonly
+                                       placeholder="Enter your email"/>
+                            </div>
+                            <div class="mb-3 form-password-toggle">
+                                <label class="form-label" for="password">Password</label>
+                                <div class="input-group input-group-merge">
+                                    <input
+                                            type="password"
+                                            id="password"
+                                            class="form-control"
+                                            name="password"
+                                            placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                                            aria-describedby="password"
+                                    />
+                                    <input type="hidden" id="imgName">
+                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                </div>
+                            </div>
+
+                            <button class="button-small" style="float:right;" onclick="saveUserInfo()" type="button">변경
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+                <!-- Register Card -->
+            </div>
+        </div>
+    </div>
+    </section>
+
+    <script>
+        const baseUrl = '/user';
+
+        window.onload = function () {
+            getUserInfo();
+        }
+
+        const getUserInfo = () => {
+            $.ajax({
+                url: '/auth/login-info',
+                type: 'GET'
+            }).done(result => {
+                if (result) {
+                console.log(result);
+                    let d = document;
+                    d.getElementById('username').value = result.username;
+                    d.getElementById('email').value = result.email;
+                    let imgUrl = '/images/' + result.imgName;
+                    let layout = d.querySelector('.pic-rayout');
+                    let img = d.createElement("img");
+                    img.setAttribute("src", imgUrl);
+                    img.style.width = "150px";
+                    img.style.height = "150px"
+
+                    layout.innerHTML = '';
+                    layout.appendChild(img);
+                }
+            }).fail(commonError);
+        }
+
+        const fileInput = () => {
+            document.querySelector('#real-input').click();
+        }
+
+        const setThumbnail = (e) => {
+            let reader = new FileReader();
+            let file = e.target.files[0];
+            let formData = new FormData();
+            let d = document;
+
+            reader.onload = function (e) {
+                if (!e.target.result.startsWith("data:image")) {
+                    alert('이미지파일이 아닙니다.');
+                    return;
+                }
+
+                let imgData = e.target.result;
+                let layout = d.querySelector('.pic-rayout');
+                let img = d.createElement("img");
+
+                img.setAttribute("src", imgData);
+                img.style.width = "150px";
+                img.style.height = "150px"
+                layout.innerHTML = '';
+                layout.appendChild(img);
+
+                let file = d.querySelector("#uploadForm")[0].files[0];
+
+                formData.append('image', file);
+
+                $.ajax({
+                    type: 'POST',
+                    enctype: 'multipart/form-data',
+                    url: '/image-upload',
+                    data: formData,
+                    dataType: 'json',
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    timeout: 600000,
+                    success: function (data) {
+                        console.log(data);
+                        d.getElementById('imgName').value = data.filename;
+                    },
+                    error: function (e) {
+                    }
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        const saveUserInfo = () => {
+            let d = document;
+            let data = {};
+            let checkList =
+                ['username'
+                    , 'email'];
+            let checkListName =
+                ['아이디'
+                    , '이메일'];
+
+            for (let chk in checkList) {
+                let target = d.querySelector('#' + checkList[chk]);
+                if (target.value == null || target.value.trim() == '') {
+                    alert(checkListName[chk] + ' 값을 확인해주세요.');
+                    return;
+                }
+                data[checkList[chk]] = target.value.trim();
+            }
+            data['imgName'] = d.getElementById('imgName').value;
+
+            $.ajax({
+                url: baseUrl,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(data)
+            }).done(result => {
+                if (result) {
+                    alert('회원정보 수정에 성공하였습니다.');
+                    location.href = '/';
+                } else {
+                    alert('회원정보 수정에 실패했습니다.');
+                }
+            }).fail(commonError);
+        }
+
+    </script>
+</div>
+</html>

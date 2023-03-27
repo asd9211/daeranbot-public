@@ -1,0 +1,101 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<!-- Begin Page Content -->
+<div layout:fragment="content">
+    <section id="main">
+        <div class="container">
+            <div class="row gtr-200">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-12 col-12-medium">
+                            <div class="sidebar">
+                                <div class="margin-btm2" style="display: flex;">
+                                    <div class="img-container">
+                                    </div>
+                                    <div style="display: flex; align-items: center; margin-left: 1%">
+                                        <li class="li-noline"><h5><span th:text="${communityInfo.writer}"></span></h5></li>
+                                    </div>
+                                </div>
+                                <li class="icon fa-clock li-noline" id="regDate" style="float: right;"></li>
+                                <h5>제목</h5>
+                                <div>
+                                    <input
+                                            type="text"
+                                            class="form-control"
+                                            id="title"
+                                            th:value="${communityInfo.title}"
+                                            readonly
+                                    />
+                                </div>
+                                <br>
+                                <div id="viewer" class="form-control"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </button>
+    </section>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        window.onload = function () {
+            initViewer();
+            initRegDate();
+            initImg();
+        }
+
+        const initViewer = () => {
+            const content = [[${communityInfo.content}]];
+            const viewer = toastui.Editor.factory({
+                el: document.querySelector('#viewer'),
+                viewer: true,
+                initialValue: content
+            });
+        }
+
+        const initRegDate = () => {
+            $('#regDate').text(' ' + compareDate([[${communityInfo.regDate}]]));
+
+        }
+
+        const initImg = () => {
+            let html = '<img src="/images/' + getOrDefaultImgName([[${communityInfo.imgName}]]) + '" class="w-px-40 h-px-40 rounded-circle">';
+            $('.img-container').html(html);
+        }
+
+        const compareDate = (regDate) => {
+            const today = new Date();
+            const timeValue = new Date(regDate);
+
+            const betweenTime = Math.floor((today.getTime() - timeValue.getTime()) / 1000 / 60);
+            if (betweenTime < 1) return '방금전';
+            if (betweenTime < 60) {
+                return `${betweenTime}분전`;
+            }
+
+            const betweenTimeHour = Math.floor(betweenTime / 60);
+            if (betweenTimeHour < 24) {
+                return `${betweenTimeHour}시간전`;
+            }
+
+            const betweenTimeDay = Math.floor(betweenTime / 60 / 24);
+            if (betweenTimeDay < 365) {
+                return `${betweenTimeDay}일전`;
+            }
+
+            return `${Math.floor(betweenTimeDay / 365)}년전`;
+        }
+
+
+        /*]]>*/
+    </script>
+</div>
+
+</html>
