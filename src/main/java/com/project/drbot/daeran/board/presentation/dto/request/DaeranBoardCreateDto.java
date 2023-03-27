@@ -1,5 +1,6 @@
 package com.project.drbot.daeran.board.presentation.dto.request;
 
+import com.project.drbot.daeran.board.domain.DaeranBoardEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,4 +26,21 @@ public class DaeranBoardCreateDto {
     private String savePath;
     private Long viewCount;
     private Long likeCount;
+
+    public DaeranBoardEntity toEntity(){
+        return DaeranBoardEntity.builder()
+                .title(title)
+                .price(price)
+                .category(category)
+                .description(description)
+                .link(link)
+                .regDate(regDate)
+                .section(section)
+                .siteName(siteName)
+                .logoPath(logoPath)
+                .savePath(savePath)
+                .viewCount(viewCount)
+                .likeCount(likeCount)
+                .build();
+    }
 }

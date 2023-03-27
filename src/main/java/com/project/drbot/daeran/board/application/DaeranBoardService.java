@@ -5,7 +5,6 @@ import com.project.drbot.common.config.exception.ServiceException;
 import com.project.drbot.daeran.board.domain.DaeranBoardEntity;
 import com.project.drbot.daeran.board.infra.DaeranBoardRepository;
 import com.project.drbot.daeran.board.presentation.dto.request.DaeranBoardCreateDto;
-import com.project.drbot.util.ModelMapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -16,9 +15,7 @@ import javax.transaction.Transactional;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -148,7 +145,7 @@ public class DaeranBoardService {
      * @return 생성여부
      */
     public boolean addBoard(DaeranBoardCreateDto request) {
-        DaeranBoardEntity entity = ModelMapperUtils.getModelMapper().map(request, DaeranBoardEntity.class);
+        DaeranBoardEntity entity = request.toEntity();
 
         if (!checkBoardDuplication(request.getTitle()))
             daeranBoardRepository.save(entity);

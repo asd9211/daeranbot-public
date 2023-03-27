@@ -18,8 +18,7 @@ public class AuthTest {
 
     @Test
     @Order(1)
-    @DisplayName("회원가입")
-    void sign_up() {
+    void 회원가입() {
         //given
         String username = "test9999";
         String password = "1234";
@@ -38,8 +37,7 @@ public class AuthTest {
 
     @Test
     @Order(2)
-    @DisplayName("로그인")
-    void login() {
+    void 로그인() {
         //given
         String username = "test";
         String password = "1234";
