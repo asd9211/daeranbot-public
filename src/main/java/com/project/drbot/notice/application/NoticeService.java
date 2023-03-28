@@ -7,6 +7,7 @@ import com.project.drbot.notice.presentation.dto.request.NoticeCreateDto;
 import com.project.drbot.notice.presentation.dto.request.NoticeUpdateDto;
 import com.project.drbot.notice.domain.NoticeEntity;
 import com.project.drbot.notice.infra.NoticeRepository;
+import com.project.drbot.user.application.UserService;
 import com.project.drbot.user.domain.UserEntity;
 import com.project.drbot.user.infra.UserRepository;
 import com.project.drbot.util.ModelMapperUtils;
@@ -21,7 +22,7 @@ import java.util.List;
 @Service
 public class NoticeService {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final NoticeRepository noticeRepository;
 
     /**
@@ -51,11 +52,9 @@ public class NoticeService {
      * @return 저장된 공지사항
      */
     public NoticeEntity addBoard(NoticeCreateDto noticeCreateDto) {
-        UserEntity user = findUserEntityByWriter(noticeCreateDto);
+        UserEntity user = userService.findByUsername(noticeCreateDto.getWriter());
         NoticeEntity entity = noticeCreateDto.toEntity(user);
-
         noticeRepository.save(entity);
-
         return entity;
     }
 
@@ -66,11 +65,8 @@ public class NoticeService {
      * @return 수정된 공지사항
      */
     public NoticeEntity modifyBoardViewCount(Long id) {
-        NoticeEntity entity = noticeRepository.findById(id)
-                .orElseThrow(() -> new ServiceException(ExceptionCode.BOARD_NOT_FOUND));
+        NoticeEntity entity = findById(id);
         entity.setViewCount(entity.getViewCount() + 1);
-        noticeRepository.save(entity);
-
         return entity;
     }
 
@@ -85,22 +81,11 @@ public class NoticeService {
         String title = noticeUpdateDto.getTitle();
         String content = noticeUpdateDto.getContent();
 
-        NoticeEntity entity = findEntityById(id);
+        NoticeEntity entity = findById(id);
         entity.updateTitle(title);
         entity.updateContent(content);
 
         return entity;
-
-    }
-
-    private UserEntity findUserEntityByWriter(NoticeCreateDto noticeCreateDto) {
-        return userRepository.findByUsername(noticeCreateDto.getWriter())
-                .orElseThrow(() -> new ServiceException("일치하는 회원이 없습니다."));
-    }
-
-    private NoticeEntity findEntityById(Long id) {
-        return noticeRepository.findById(id)
-                .orElseThrow(() -> new ServiceException(ExceptionCode.BOARD_NOT_FOUND));
     }
 
 }

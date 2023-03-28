@@ -159,8 +159,7 @@ public class DaeranBoardService {
      * @return 수정여부
      */
     public boolean modifyBoardViewCount(Long id) {
-        DaeranBoardEntity entity = daeranBoardRepository.findById(id)
-                .orElseThrow(() -> new ServiceException(ExceptionCode.BOARD_NOT_FOUND));
+        DaeranBoardEntity entity = findById(id);
         entity.updateViewCount(entity.getViewCount() + 1);
 
         return entity.getId() != null;

@@ -41,17 +41,17 @@ public class DaeranLikeService {
      * @param daeranLikeCreateDto 좋아요 생성 정보
      * @return 성공여부
      */
-    public boolean addLike(DaeranLikeCreateDto daeranLikeCreateDto) {
-        validateAlreadyLiked(daeranLikeCreateDto);
+    public DaeranLikeEntity addLike(DaeranLikeCreateDto daeranLikeCreateDto) {
+        UserEntity user = userService.findByUsername(daeranLikeCreateDto.getUsername());
+        validateAlreadyLiked(daeranLikeCreateDto, user);
 
         DaeranBoardEntity daeran = daeranBoardService.findById(daeranLikeCreateDto.getDaeranId());
-        UserEntity user = userService.findByUsername(daeranLikeCreateDto.getUsername());
         DaeranLikeEntity like = daeranLikeCreateDto.toEntity(daeran, user);
 
         daeranLikeRepository.save(like);
         daeran.updateLikeCount();
 
-        return like.getId() != null;
+        return like;
     }
 
     /**
@@ -59,9 +59,9 @@ public class DaeranLikeService {
      *
      * @param daeranLikeCreateDto 좋아요 생성 정보
      */
-    private void validateAlreadyLiked(DaeranLikeCreateDto daeranLikeCreateDto) {
+    private void validateAlreadyLiked(DaeranLikeCreateDto daeranLikeCreateDto, UserEntity user) {
         boolean isAlreadyLiked = daeranLikeRepository
-                .findLikeByUserAndDaeranId(userService.findByUsername(daeranLikeCreateDto.getUsername()), daeranLikeCreateDto.getDaeranId())
+                .findLikeByUserAndDaeranId(user, daeranLikeCreateDto.getDaeranId())
                 .isPresent();
 
         if (isAlreadyLiked)

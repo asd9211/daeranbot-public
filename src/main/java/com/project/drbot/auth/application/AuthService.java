@@ -33,7 +33,7 @@ public class AuthService {
      * @param userCreateDto 등록할 회원 정보
      * @return 성공 여부
      */
-    public boolean signUp(UserCreateDto userCreateDto) {
+    public UserEntity signUp(UserCreateDto userCreateDto) {
         String encryptedPassword = passwordEncoder.encode(userCreateDto.getPassword());
         UserEntity userEntity = userCreateDto.toEntity(encryptedPassword);
 
@@ -43,7 +43,7 @@ public class AuthService {
 
         userRepository.save(userEntity);
 
-        return userEntity.getId() != null;
+        return userEntity;
     }
 
     /**

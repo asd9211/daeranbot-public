@@ -4,6 +4,7 @@ import com.project.drbot.auth.presentation.dto.request.UserCreateDto;
 import com.project.drbot.auth.presentation.dto.request.UserLoginDto;
 import com.project.drbot.auth.application.AuthService;
 import com.project.drbot.user.application.UserService;
+import com.project.drbot.user.domain.UserEntity;
 import com.project.drbot.user.presentation.dto.response.UserInfoResponse;
 import com.project.drbot.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +55,7 @@ public class AuthRestController {
      * @return 성공여부
      */
     @PostMapping("/signup")
-    public boolean signUp(@RequestBody UserCreateDto userCreateDto) {
+    public UserEntity signUp(@RequestBody UserCreateDto userCreateDto) {
         return authService.signUp(userCreateDto);
     }
 }

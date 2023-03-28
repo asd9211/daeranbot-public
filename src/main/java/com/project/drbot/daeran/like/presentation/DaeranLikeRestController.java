@@ -1,5 +1,6 @@
 package com.project.drbot.daeran.like.presentation;
 
+import com.project.drbot.daeran.like.domain.DaeranLikeEntity;
 import com.project.drbot.daeran.like.presentation.dto.request.DaeranLikeCreateDto;
 import com.project.drbot.daeran.like.application.DaeranLikeService;
 import com.project.drbot.daeran.like.presentation.dto.response.DaeranLikeInfoResponse;
@@ -43,7 +44,7 @@ public class DaeranLikeRestController {
      * @return 성공여부
      */
     @PostMapping
-    public boolean likeAdd(DaeranLikeCreateDto daeranLikeCreateDto) {
+    public DaeranLikeEntity likeAdd(DaeranLikeCreateDto daeranLikeCreateDto) {
         daeranLikeCreateDto.setUsername(UserInfoProvider.getUsername());
         return daeranLikeService.addLike(daeranLikeCreateDto);
     }
