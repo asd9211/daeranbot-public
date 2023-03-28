@@ -41,4 +41,8 @@ public class DaeranLikeEntity implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DaeranBoardEntity daeran;
 
+
+    public Long getDaeranBoardId(){
+        return daeran.getId();
+    }
 }

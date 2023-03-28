@@ -15,7 +15,7 @@ public interface DaeranLikeRepository extends JpaRepository<DaeranLikeEntity, Lo
 
     List<DaeranLikeEntity> findByDaeran(DaeranBoardEntity daeran);
 
-    @Query(value = "select l.* from tb_daeran_like l inner join tb_user u on l.user_id = u.id and u.username = :username", nativeQuery = true)
+    @Query(value = "select l from DaeranLikeEntity l join fetch l.user u where u.username = :username")
     List<DaeranLikeEntity> findAllByUserJQPL(@Param("username")String username);
 
     Long findCountByDaeranId(Long daeranId);

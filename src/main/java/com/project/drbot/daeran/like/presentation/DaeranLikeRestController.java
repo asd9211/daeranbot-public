@@ -32,7 +32,8 @@ public class DaeranLikeRestController {
     @GetMapping("/username")
     public List<DaeranLikeInfoResponse> likeList() {
         String username = UserInfoProvider.getUsername();
-        return daeranLikeService.findByUser(username).stream()
+        return daeranLikeService.findByUser(username)
+                .stream()
                 .map(DaeranLikeInfoResponse::new)
                 .collect(Collectors.toList());
     }

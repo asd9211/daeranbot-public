@@ -1,6 +1,7 @@
 package com.project.drbot.daeran.like.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.drbot.daeran.board.domain.DaeranBoardEntity;
 import com.project.drbot.daeran.like.domain.DaeranLikeEntity;
 
 public class DaeranLikeInfoResponse {
@@ -15,6 +16,10 @@ public class DaeranLikeInfoResponse {
 
     public Long getId() {
         return daeranLikeEntity.getId();
+    }
+
+    public Long getDaeranId(){
+        return daeranLikeEntity.getDaeranBoardId();
     }
 
 }
