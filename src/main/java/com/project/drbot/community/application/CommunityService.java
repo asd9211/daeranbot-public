@@ -6,6 +6,7 @@ import com.project.drbot.community.domain.CommunityEntity;
 import com.project.drbot.community.infra.CommunityRepository;
 import com.project.drbot.common.config.exception.ServiceException;
 import com.project.drbot.common.config.exception.ExceptionCode;
+import com.project.drbot.user.application.UserService;
 import com.project.drbot.user.domain.UserEntity;
 import com.project.drbot.user.infra.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class CommunityService {
 
     private final CommunityRepository communityRepository;
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     /**
      * 커뮤니티를 모두 조회합니다
@@ -52,11 +53,9 @@ public class CommunityService {
      * @return 저장된 커뮤니티 게시글 정보
      */
     public CommunityEntity addBoard(CommunityCreateDto communityCreateDto) {
-        UserEntity user = findUserEntityByWriter(communityCreateDto);
+        UserEntity user = userService.findByUsername(communityCreateDto.getWriter());
         CommunityEntity entity = communityCreateDto.toEntity(user);
-
         communityRepository.save(entity);
-
         return entity;
     }
 
@@ -72,7 +71,7 @@ public class CommunityService {
         String title = communityUpdateDto.getTitle();
         String content = communityUpdateDto.getContent();
 
-        CommunityEntity entity = findEntityById(id);
+        CommunityEntity entity = findById(id);
         entity.updateTitle(title);
         entity.updateContent(content);
 
@@ -85,11 +84,10 @@ public class CommunityService {
      * @param id 커뮤니티 게시글 Id
      * @return 성공여부
      */
-    public boolean modifyBoardViewCount(Long id) {
-        CommunityEntity entity = findEntityById(id);
+    public CommunityEntity modifyBoardViewCount(Long id) {
+        CommunityEntity entity = findById(id);
         entity.updateViewCount(entity.getViewCount() + 1);
-
-        return entity.getId() != null;
+        return entity;
     }
 
     /**
@@ -99,20 +97,9 @@ public class CommunityService {
      * @return 성공여부
      */
     public boolean removeBoard(Long id) {
-        CommunityEntity entity = findEntityById(id);
+        CommunityEntity entity = findById(id);
         communityRepository.delete(entity);
         return entity.getId() == null;
-    }
-
-    private UserEntity findUserEntityByWriter(CommunityCreateDto communityCreateDto) {
-        return userRepository.findByUsername(communityCreateDto.getWriter())
-                .orElseThrow(() -> new ServiceException("일치하는 회원이 없습니다."));
-
-    }
-
-    private CommunityEntity findEntityById(Long id) {
-        return communityRepository.findById(id)
-                .orElseThrow(() -> new ServiceException(ExceptionCode.BOARD_NOT_FOUND));
     }
 
 }

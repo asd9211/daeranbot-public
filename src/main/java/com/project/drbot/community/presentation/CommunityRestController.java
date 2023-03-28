@@ -4,6 +4,7 @@ import com.project.drbot.community.presentation.dto.request.CommunityCreateDto;
 import com.project.drbot.community.presentation.dto.response.CommunityResponse;
 import com.project.drbot.community.presentation.dto.request.CommunityUpdateDto;
 import com.project.drbot.community.application.CommunityService;
+import com.project.drbot.notice.presentation.dto.response.NoticeInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -48,8 +49,8 @@ public class CommunityRestController {
      * @Param 게시글 식별자 Id
      */
     @PutMapping("/viewCount")
-    public boolean viewCountAdd(Long id) {
-        return communityService.modifyBoardViewCount(id);
+    public CommunityResponse viewCountAdd(Long id) {
+        return new CommunityResponse(communityService.modifyBoardViewCount(id));
     }
 
     /**
