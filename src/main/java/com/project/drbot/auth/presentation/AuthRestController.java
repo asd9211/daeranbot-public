@@ -3,6 +3,7 @@ package com.project.drbot.auth.presentation;
 import com.project.drbot.auth.presentation.dto.request.UserCreateDto;
 import com.project.drbot.auth.presentation.dto.request.UserLoginDto;
 import com.project.drbot.auth.application.AuthService;
+import com.project.drbot.auth.presentation.dto.response.UserSignupResponse;
 import com.project.drbot.user.application.UserService;
 import com.project.drbot.user.domain.UserEntity;
 import com.project.drbot.user.presentation.dto.response.UserInfoResponse;
@@ -55,7 +56,7 @@ public class AuthRestController {
      * @return 성공여부
      */
     @PostMapping("/signup")
-    public UserEntity signUp(@RequestBody UserCreateDto userCreateDto) {
-        return authService.signUp(userCreateDto);
+    public UserSignupResponse signUp(@RequestBody UserCreateDto userCreateDto) {
+        return new UserSignupResponse(authService.signUp(userCreateDto));
     }
 }

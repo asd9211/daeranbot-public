@@ -45,7 +45,6 @@ public class NoticeEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
-    @JsonIgnoreProperties(value = {"applications", "hibernateLazyInitializer"})
     private UserEntity user;
 
     /**
