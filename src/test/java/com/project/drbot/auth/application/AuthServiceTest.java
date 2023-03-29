@@ -95,9 +95,9 @@ public class AuthServiceTest {
     @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
     class 회원_등록_테스트 {
 
-        UserCreateDto 회원생성요청정보() {
+        UserCreateDto 회원생성요청정보(String password) {
             UserCreateDto userCreateDto = UserCreateDto.builder().username(mockUser.getUsername())
-                    .password(mockUser.getPassword())
+                    .password(password)
                     .email(mockUser.getEmail())
                     .build();
             return userCreateDto;
@@ -106,8 +106,9 @@ public class AuthServiceTest {
         @Test
         void 회원가입_성공() {
             //given
-            String encrytedPassword = "1234!@#";
-            UserCreateDto userCreateDto = 회원생성요청정보();
+            String password = "12345qwert!@#$%";
+            String encrytedPassword = "123!@#";
+            UserCreateDto userCreateDto = 회원생성요청정보(password);
 
             doReturn(encrytedPassword).when(passwordEncoder).encode(any(String.class));
             doReturn(false).when(userRepository).existsByUsername(userCreateDto.getUsername());
@@ -120,10 +121,11 @@ public class AuthServiceTest {
         }
 
         @Test
-        void 회원가입_실패() {
+        void 회원가입_실패_ID중복() {
             //given
+            String password = "12345qwert!@#$%";
             String encrytedPassword = "1234!@#";
-            UserCreateDto userCreateDto = 회원생성요청정보();
+            UserCreateDto userCreateDto = 회원생성요청정보(password);
 
             doReturn(encrytedPassword).when(passwordEncoder).encode(any(String.class));
             doReturn(true).when(userRepository).existsByUsername(userCreateDto.getUsername());
@@ -133,6 +135,21 @@ public class AuthServiceTest {
 
             //then
             String expectedMessage = "이미 등록된 ID입니다.";
+            assertEquals(expectedMessage, e.getMessage());
+
+        }
+
+        @Test
+        void 회원가입_실패_패스워드정책_부적합() {
+            //given
+            String password = "123123!@#$%";
+            UserCreateDto userCreateDto = 회원생성요청정보(password);
+
+            //when
+            ServiceException e = assertThrows(ServiceException.class, () -> authService.signUp(userCreateDto));
+
+            //then
+            String expectedMessage = "비밀번호는 영어 대문자, 영어 소문자, 숫자, 특수문자 중 3종류 이상으로 12자리 이상의 문자열로 생성해야 합니다.";
             assertEquals(expectedMessage, e.getMessage());
 
         }

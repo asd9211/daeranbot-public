@@ -29,6 +29,11 @@ public class UserService implements UserDetailsService {
 
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * 로그인한 유저의 정보를 조회합니다.
+     *
+     * @return 회원 상세 정보
+     */
     public UserInfoResponse getLoginUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!authentication.getPrincipal().equals("anonymousUser")) {
@@ -51,6 +56,12 @@ public class UserService implements UserDetailsService {
         return new User(user.getUsername(), user.getPassword(), Arrays.asList(new SimpleGrantedAuthority(user.getRole())));
     }
 
+    /**
+     * 회원정보를 수정합니다.
+     *
+     * @param userModifyDto 수정할 회원 정보
+     * @return 회원
+     */
     public UserEntity modifyUserInfo(UserModifyDto userModifyDto) {
         UserEntity user = userRepository.findByUsername(userModifyDto.getUsername().toLowerCase()).orElseThrow(
                 () -> new ServiceException(ExceptionCode.USER_NOT_REGISTED)
@@ -58,10 +69,15 @@ public class UserService implements UserDetailsService {
 
         user.updateImgName(userModifyDto.getImgName());
         user.updatePassword(userModifyDto.getPassword(), passwordEncoder);
-
         return user;
     }
 
+    /**
+     * 회원정보를 조회합니다.
+     *
+     * @param username 유저 id
+     * @return 회원
+     */
     public UserEntity findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new ServiceException(ExceptionCode.USER_NOT_FOUND));

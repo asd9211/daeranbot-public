@@ -34,6 +34,7 @@ public class AuthService {
      * @return 성공 여부
      */
     public UserEntity signUp(UserCreateDto userCreateDto) {
+        validatePassword(userCreateDto);
         String encryptedPassword = passwordEncoder.encode(userCreateDto.getPassword());
         UserEntity userEntity = userCreateDto.toEntity(encryptedPassword);
 
@@ -63,6 +64,58 @@ public class AuthService {
         }
 
         return new User(user.getUsername(), user.getPassword(), Arrays.asList(new SimpleGrantedAuthority(user.getRole())));
+    }
+
+    /**
+     * 패스워드 정책에 부합하는지 검사합니다.
+     * <p>
+     * 12자리 이상의 문자열
+     * 대문자, 영어 소문자, 숫자, 특수문자 중 3종류 이상
+     *
+     * @param userCreateDto 등록할 회원 정보
+     */
+    private void validatePassword(UserCreateDto userCreateDto) {
+        String password = userCreateDto.getPassword();
+        int passCount = 0;              // password 정책 통과 갯수
+        int passCountLimit = 3;         // password 정책 최소 통과 갯수
+        int passwordLengthLimit = 12;   // password 길이 제한
+
+        if (containLowerCase(password)) {
+            passCount++;
+        }
+
+        if (containUpperCase(password)) {
+            passCount++;
+        }
+
+        if (containNumber(password)) {
+            passCount++;
+        }
+
+        if (containsSpecialChar(password)) {
+            passCount++;
+        }
+
+        if (passCount < passCountLimit || password.length() < passwordLengthLimit) {
+            throw new ServiceException(ExceptionCode.PASSWORD_VALIDATE_FAIL);
+        }
+    }
+
+    private boolean containLowerCase(String password) {
+        return password.matches(".*[a-z].*");
+    }
+
+    private boolean containUpperCase(String password) {
+        return password.matches(".*[A-Z].*");
+    }
+
+    private boolean containNumber(String password) {
+        return password.matches(".*\\d.*");
+    }
+
+    private boolean containsSpecialChar(String password) {
+        String specialCharPattern = "[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]";
+        return password.matches(".*" + specialCharPattern + ".*");
     }
 
     private boolean isAlraedyExistsMember(UserEntity userEntity) {
