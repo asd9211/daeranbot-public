@@ -16,3 +16,4 @@
 ### 자세한 정보는 Notion에서!
 https://humdrum-tiara-182.notion.site/2022-09-21-d3a44512424b47ceb4d5aeaafe7f61ab
  
+![image](https://user-images.githubusercontent.com/47582622/228147352-d778f0f6-144a-40fe-87f8-5b7334c2dcce.png)
