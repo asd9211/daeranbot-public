@@ -2,15 +2,12 @@ package com.project.drbot.notice.application;
 
 import com.project.drbot.common.config.exception.ServiceException;
 import com.project.drbot.common.config.exception.ExceptionCode;
-import com.project.drbot.notice.presentation.dto.NoticeDto;
 import com.project.drbot.notice.presentation.dto.request.NoticeCreateDto;
 import com.project.drbot.notice.presentation.dto.request.NoticeUpdateDto;
 import com.project.drbot.notice.domain.NoticeEntity;
 import com.project.drbot.notice.infra.NoticeRepository;
 import com.project.drbot.user.application.UserService;
 import com.project.drbot.user.domain.UserEntity;
-import com.project.drbot.user.infra.UserRepository;
-import com.project.drbot.util.ModelMapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -66,7 +63,7 @@ public class NoticeService {
      */
     public NoticeEntity modifyBoardViewCount(Long id) {
         NoticeEntity entity = findById(id);
-        entity.setViewCount(entity.getViewCount() + 1);
+        entity.updateViewCount(entity.getViewCount() + 1);
         return entity;
     }
 

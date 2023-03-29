@@ -1,6 +1,5 @@
 package com.project.drbot.notice.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.drbot.user.domain.UserEntity;
 import lombok.*;
 
@@ -59,7 +58,7 @@ public class NoticeEntity {
     @Column
     private Long viewCount;
 
-    public void setViewCount(Long viewCount) {
+    public void updateViewCount(Long viewCount) {
         this.viewCount = viewCount;
     }
 
