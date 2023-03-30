@@ -90,7 +90,6 @@ public class DaeranBoardService {
      * @return 대란 게시글 리스트
      */
     public List<DaeranBoardEntity> findBoardListBySiteNamesAndCategory(Pageable pageRequest, List<String> siteNames, List<String> category) {
-        //Todo : 추후 fetch 조인으로 select 쿼리 다중으로 나가는거 방지
         return daeranBoardRepository.findBySiteNameInAndCategoryInOrderByRegDateDesc(pageRequest, siteNames, category);
     }
 

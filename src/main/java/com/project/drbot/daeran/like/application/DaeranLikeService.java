@@ -39,7 +39,7 @@ public class DaeranLikeService {
      * 좋아요를 저장합니다.
      *
      * @param daeranLikeCreateDto 좋아요 생성 정보
-     * @return 성공여부
+     * @return 좋아요 정보
      */
     public DaeranLikeEntity addLike(DaeranLikeCreateDto daeranLikeCreateDto) {
         UserEntity user = userService.findByUsername(daeranLikeCreateDto.getUsername());
@@ -49,15 +49,16 @@ public class DaeranLikeService {
         DaeranLikeEntity like = daeranLikeCreateDto.toEntity(daeran, user);
 
         daeranLikeRepository.save(like);
-        daeran.updateLikeCount();
+        daeran.plusLike();
 
         return like;
     }
 
     /**
-     * 이미 좋아요를 눌렀는지 확인합니다.
+     * 유저가 이미 좋아요를 눌렀는지 확인합니다.
      *
      * @param daeranLikeCreateDto 좋아요 생성 정보
+     * @param user 유저 정보
      */
     private void validateAlreadyLiked(DaeranLikeCreateDto daeranLikeCreateDto, UserEntity user) {
         boolean isAlreadyLiked = daeranLikeRepository

@@ -112,7 +112,7 @@ public class DaeranBoardEntity {
         this.viewCount = viewCount;
     }
 
-    public synchronized void updateLikeCount() {
+    public void plusLike() {
         this.likeCount++;
     }
 
