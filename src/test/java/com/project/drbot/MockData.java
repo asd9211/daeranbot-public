@@ -4,6 +4,7 @@ import com.project.drbot.common.config.property.CommonPath;
 import com.project.drbot.daeran.board.domain.DaeranBoardEntity;
 import com.project.drbot.daeran.board.domain.Section;
 import com.project.drbot.daeran.board.presentation.dto.request.DaeranBoardCreateDto;
+import com.project.drbot.daeran.reply.domain.DaeranReplyEntity;
 import com.project.drbot.notice.domain.NoticeEntity;
 import com.project.drbot.user.domain.UserEntity;
 
@@ -53,6 +54,16 @@ public class MockData {
                 .content("공지사항 내용입니다.")
                 .writer(username)
                 .viewCount(0L)
+                .user(유저정보())
+                .build();
+    }
+
+    public static DaeranReplyEntity 댓글(){
+        return DaeranReplyEntity.builder()
+                .id(1L)
+                .regDate(LocalDateTime.now())
+                .content("댓글 테스트")
+                .daeran(대란())
                 .user(유저정보())
                 .build();
     }

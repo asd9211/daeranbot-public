@@ -3,10 +3,7 @@ package com.project.drbot.daeran.reply.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.drbot.daeran.board.domain.DaeranBoardEntity;
 import com.project.drbot.user.domain.UserEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -18,6 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(name = "tb_reply")
+@ToString
 public class DaeranReplyEntity {
     /**
      * 고유 식별자

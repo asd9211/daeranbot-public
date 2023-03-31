@@ -1,6 +1,7 @@
 package com.project.drbot.daeran.reply.presentation;
 
 import com.project.drbot.daeran.reply.application.DaeranReplyService;
+import com.project.drbot.daeran.reply.domain.DaeranReplyEntity;
 import com.project.drbot.daeran.reply.presentation.dto.request.DaeranReplyCreateDto;
 import com.project.drbot.daeran.reply.presentation.dto.response.DaeranReplyInfoResponse;
 import com.project.drbot.util.UserInfoProvider;
@@ -53,9 +54,9 @@ public class DaeranReplyRestController {
      * @return 성공여부
      */
     @PostMapping
-    public boolean replyAdd(DaeranReplyCreateDto daeranReplyCreateDto) {
+    public DaeranReplyInfoResponse replyAdd(DaeranReplyCreateDto daeranReplyCreateDto) {
         daeranReplyCreateDto.setUsername(UserInfoProvider.getUsername());
-        return daeranReplyService.addReply(daeranReplyCreateDto);
+        return new DaeranReplyInfoResponse(daeranReplyService.addReply(daeranReplyCreateDto));
     }
 
 }

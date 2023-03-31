@@ -106,7 +106,7 @@ public class DaeranBoardEntity {
      * 댓글리스트
      */
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "daeran")
-    private List<DaeranReplyEntity> daeranReplyList = new ArrayList<>();
+    private List<DaeranReplyEntity> daeranReplyList;
 
     public void updateViewCount(Long viewCount) {
         this.viewCount = viewCount;

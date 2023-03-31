@@ -1,11 +1,9 @@
 package com.project.drbot.daeran.reply.application;
 
-import com.project.drbot.common.config.exception.ServiceException;
+import com.project.drbot.daeran.board.application.DaeranBoardService;
 import com.project.drbot.daeran.board.domain.DaeranBoardEntity;
-import com.project.drbot.daeran.board.infra.DaeranBoardRepository;
 import com.project.drbot.daeran.reply.domain.DaeranReplyEntity;
 import com.project.drbot.daeran.reply.infra.DaeranReplyRepository;
-import com.project.drbot.common.config.exception.ExceptionCode;
 import com.project.drbot.daeran.reply.presentation.dto.request.DaeranReplyCreateDto;
 import com.project.drbot.user.application.UserService;
 import com.project.drbot.user.domain.UserEntity;
@@ -23,7 +21,7 @@ import java.util.List;
 public class DaeranReplyService {
 
     private final DaeranReplyRepository daeranReplyRepository;
-    private final DaeranBoardRepository daeranBoardRepository;
+    private final DaeranBoardService daeranBoardService;
     private final UserService userService;
 
     /**
@@ -33,7 +31,7 @@ public class DaeranReplyService {
      * @return 댓글 리스트
      */
     public List<DaeranReplyEntity> findReplyList(Long boardId) {
-        DaeranBoardEntity daeran = daeranBoardRepository.findById(boardId).orElseThrow(() -> new ServiceException(ExceptionCode.BOARD_NOT_FOUND));
+        DaeranBoardEntity daeran = daeranBoardService.findById(boardId);
         return daeranReplyRepository.findByDaeranOrderByRegDateDesc(daeran);
     }
 
@@ -52,12 +50,10 @@ public class DaeranReplyService {
      * @param daeranReplyCreateDto 댓글 생성정보
      * @return 성공여부
      */
-    public boolean addReply(DaeranReplyCreateDto daeranReplyCreateDto) {
-        DaeranBoardEntity daeran = new DaeranBoardEntity().builder().id(daeranReplyCreateDto.getDaeranId()).build();
+    public DaeranReplyEntity addReply(DaeranReplyCreateDto daeranReplyCreateDto) {
+        DaeranBoardEntity daeran = daeranBoardService.findById(daeranReplyCreateDto.getDaeranId());
         UserEntity user = userService.findByUsername(daeranReplyCreateDto.getUsername());
         DaeranReplyEntity reply = daeranReplyCreateDto.toEntity(daeran, user);
-
-        daeranReplyRepository.save(reply);
-        return reply.getId() != null;
+        return daeranReplyRepository.save(reply);
     }
 }
