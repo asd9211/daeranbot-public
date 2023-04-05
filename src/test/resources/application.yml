@@ -58,6 +58,8 @@ org:
 server:
   port: '8082'
 
+jwt:
+  secret_key: daeranbot!@
 
 #?? ??
 ---
@@ -110,3 +112,6 @@ img:
 org:
   gradle:
     daemon: 'false'
+
+jwt:
+  secret_key: daeranbot!@

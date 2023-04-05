@@ -18,8 +18,8 @@ public class MockData {
 
 
     public static UserEntity 유저정보() {
-        return UserEntity.builder().
-                id(1L)
+        return UserEntity.builder()
+                .id(1L)
                 .username(username)
                 .password(password)
                 .email(email)

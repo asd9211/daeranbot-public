@@ -1,12 +1,13 @@
 package com.project.drbot.daeran.like.application;
 
+import com.project.drbot.common.config.exception.ExceptionCode;
 import com.project.drbot.common.config.exception.ServiceException;
 import com.project.drbot.daeran.board.application.DaeranBoardService;
 import com.project.drbot.daeran.board.domain.DaeranBoardEntity;
-import com.project.drbot.daeran.like.presentation.dto.request.DaeranLikeCreateDto;
 import com.project.drbot.daeran.like.domain.DaeranLikeEntity;
+import com.project.drbot.daeran.like.infra.DaeranLikeCustomRepository;
 import com.project.drbot.daeran.like.infra.DaeranLikeRepository;
-import com.project.drbot.common.config.exception.ExceptionCode;
+import com.project.drbot.daeran.like.presentation.dto.request.DaeranLikeCreateDto;
 import com.project.drbot.user.application.UserService;
 import com.project.drbot.user.domain.UserEntity;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.List;
 @Transactional
 public class DaeranLikeService {
     private final DaeranLikeRepository daeranLikeRepository;
+    private final DaeranLikeCustomRepository daeranLikeCustomRepository;
     private final UserService userService;
     private final DaeranBoardService daeranBoardService;
 
@@ -32,14 +34,14 @@ public class DaeranLikeService {
      * @return 성공여부
      */
     public List<DaeranLikeEntity> findByUser(String username) {
-        return daeranLikeRepository.findAllByUserJQPL(username);
+        return daeranLikeCustomRepository.findAllInnerFetchJoinByUsername(username);
     }
 
     /**
      * 좋아요를 저장합니다.
      *
      * @param daeranLikeCreateDto 좋아요 생성 정보
-     * @return 좋아요 정보
+     * @return 성공여부
      */
     public DaeranLikeEntity addLike(DaeranLikeCreateDto daeranLikeCreateDto) {
         UserEntity user = userService.findByUsername(daeranLikeCreateDto.getUsername());
@@ -55,10 +57,9 @@ public class DaeranLikeService {
     }
 
     /**
-     * 유저가 이미 좋아요를 눌렀는지 확인합니다.
+     * 이미 좋아요를 눌렀는지 확인합니다.
      *
      * @param daeranLikeCreateDto 좋아요 생성 정보
-     * @param user 유저 정보
      */
     private void validateAlreadyLiked(DaeranLikeCreateDto daeranLikeCreateDto, UserEntity user) {
         boolean isAlreadyLiked = daeranLikeRepository
