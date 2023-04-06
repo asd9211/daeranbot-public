@@ -95,33 +95,4 @@ public class DaeranBoardInfoResponse {
         return entity.getLikeCount();
     }
 
-
-
-    public static int solution(int[] citations) {
-        // n편중 h번이상 인용된 논문이 h편이상이고 나머지 논문이 h번 이하 인용되었다면 h의 최대값이 h-index
-        int idx = 0;
-        int H_idx = 0;
-        int len = citations.length;
-
-        Arrays.sort(citations);
-        while (true){
-            if((len - idx) > H_idx){
-                if(H_idx < citations[idx]){
-                    H_idx ++;
-                } else {
-                    idx ++;
-                }
-            } else{
-                break;
-            }
-        }
-
-        return H_idx;
-    }
-
-    public static void main(String[] args){
-        int[] arr = {3, 0, 6, 1, 5};
-        System.out.println(solution(arr));
-    }
-
 }
